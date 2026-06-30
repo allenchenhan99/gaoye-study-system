@@ -67,3 +67,20 @@ def test_parse_section_stops_on_standalone_jieda_heading():
     sec = ("1. 第一題？\n(A)甲\n(B)乙\n(C)丙\n(D)丁\n解答\n1\nA\n")
     qs = eq.parse_section(sec)
     assert len(qs) == 1
+
+def test_parse_section_splits_full_inline_options():
+    sec = "1. 世界最大市值的交易所為：\n(A)臺灣 (B)倫敦 (C)東京 (D)紐約\n"
+    qs = eq.parse_section(sec)
+    assert qs[0]["options"] == {"A": "臺灣", "B": "倫敦", "C": "東京", "D": "紐約"}
+
+def test_parse_section_splits_partial_inline_options():
+    sec = "1. 題幹？\n(A)甲\n(B)乙 (C)丙\n(D)丁\n"
+    qs = eq.parse_section(sec)
+    assert set(qs[0]["options"]) == {"A", "B", "C", "D"}
+    assert qs[0]["options"]["C"] == "丙"
+
+def test_parse_section_question_and_options_all_one_line():
+    sec = "1. 題幹敘述 (A)甲 (B)乙 (C)丙 (D)丁\n"
+    qs = eq.parse_section(sec)
+    assert qs[0]["stem"] == "題幹敘述"
+    assert qs[0]["options"] == {"A": "甲", "B": "乙", "C": "丙", "D": "丁"}
