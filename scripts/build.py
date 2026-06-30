@@ -41,7 +41,7 @@ def build_questions(manifest, raw_root, out_path) -> list:
     for entry in manifest:
         if not entry["is_question_file"]:
             continue
-        text = pdfutils.pdf_text(entry["source"])
+        text = pdfutils.pdf_text(entry["source"], layout=True)
         questions += extract_questions.extract_questions(
             text, entry["year"], entry["round"], entry["source"])
     answers = _collect_answers(manifest, raw_root)
