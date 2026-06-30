@@ -6,7 +6,7 @@ _Q_START = re.compile(r"^\s*(\d{1,2})[.。](?!\d)\s*(.*)")  # "1."/"1。"，但�
 _OPT = re.compile(r"^\s*\(([ABCD])\)\s*(.*)")
 _STOP = re.compile(r"(試題解答|標準答案|^\s*解答\s*$)")
 _NOISE = re.compile(r"(請填|應試號碼|入場證|※|第\s*\d+\s*頁|共\s*\d+\s*頁|資格測驗試題)")
-_OPT_SPLIT = re.compile(r"\(([ABCD])\)")
+_OPT_SPLIT = re.compile(r"(?<![^\s])\(([ABCD])\)")  # 僅行首或前接空白的 (X) 才視為選項標記
 
 def split_subject_sections(text: str):
     lines = text.splitlines()

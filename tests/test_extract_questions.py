@@ -92,3 +92,12 @@ def test_parse_section_decimal_continuation_not_new_question():
     assert len(qs) == 1 and qs[0]["number"] == 31
     assert "0.5，則共變數為：" in qs[0]["stem"]
     assert qs[0]["options"] == {"A": "0.04", "B": "0.03", "C": "0.02", "D": "0.01"}
+
+def test_parse_section_keeps_none_of_above_option_intact():
+    # 選項 D「選項(A)(B)(C)皆非」內的 (A)(B)(C) 不可被當成選項標記而清空真正的 A/B/C
+    sec = ("9. 題幹？\n(A)僅刑責 (B)僅民責\n(C)刑責並民責 (D)選項(A)(B)(C)皆非\n")
+    qs = eq.parse_section(sec)
+    assert qs[0]["options"]["A"] == "僅刑責"
+    assert qs[0]["options"]["B"] == "僅民責"
+    assert qs[0]["options"]["C"] == "刑責並民責"
+    assert qs[0]["options"]["D"] == "選項(A)(B)(C)皆非"

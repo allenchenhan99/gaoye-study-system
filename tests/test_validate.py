@@ -60,3 +60,9 @@ def test_validate_good_id_not_flagged_as_bad_id():
     qs = [{"id": "114-1-law-001", "year": 114, "round": 1, "stem": "s",
            "options": {"A": "1", "B": "2", "C": "3", "D": "4"}, "answer": "A", "subject": "law"}]
     assert validate.validate_questions(qs) == []
+
+def test_validate_flags_empty_option_value():
+    qs = [{"id": "114-1-law-001", "year": 114, "round": 1, "stem": "s",
+           "options": {"A": "", "B": "乙", "C": "丙", "D": "丁"}, "answer": "B", "subject": "law"}]
+    reasons = {r["id"]: r["reason"] for r in validate.validate_questions(qs)}
+    assert "missing_option" in reasons["114-1-law-001"]

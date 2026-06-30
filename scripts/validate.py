@@ -11,7 +11,8 @@ def validate_questions(questions):
         reasons = []
         if not q.get("stem"):
             reasons.append("empty_stem")
-        if set(q.get("options", {})) != {"A", "B", "C", "D"}:
+        opts = q.get("options", {})
+        if set(opts) != {"A", "B", "C", "D"} or any(not str(opts.get(k, "")).strip() for k in ("A", "B", "C", "D")):
             reasons.append("missing_option")
         ans = q.get("answer")
         if q.get("allCredit"):
