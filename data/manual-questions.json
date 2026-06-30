@@ -1,0 +1,7 @@
+[
+  {"id": "114-1-finance-009", "options": {"A": "$91,700", "B": "$93,700", "C": "$104,300", "D": "$106,300"}},
+  {"id": "105-2-law-013", "allCredit": true},
+  {"id": "112-2-finance-028", "allCredit": true},
+  {"id": "113-2-investment-043", "allCredit": true},
+  {"id": "114-1-investment-044", "allCredit": true}
+]

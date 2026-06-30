@@ -36,6 +36,26 @@ def _load_manual_answers(path) -> dict:
         out[(r["year"], r["round"], r["subject"], r["number"])] = r["answer"]
     return out
 
+def _load_manual_questions(path) -> list:
+    p = Path(path)
+    if not p.exists():
+        return []
+    return json.loads(p.read_text(encoding="utf-8"))
+
+def _apply_manual_questions(questions, overrides):
+    by_id = {q["id"]: q for q in questions}
+    for ov in overrides:
+        q = by_id.get(ov["id"])
+        if not q:
+            continue
+        if "stem" in ov:
+            q["stem"] = ov["stem"]
+        if "options" in ov:
+            q["options"] = ov["options"]
+        if ov.get("allCredit"):
+            q["allCredit"] = True
+    return questions
+
 def build_questions(manifest, raw_root, out_path) -> list:
     questions = []
     for entry in manifest:
@@ -48,6 +68,8 @@ def build_questions(manifest, raw_root, out_path) -> list:
     attach_answers(questions, answers)
     manual = _load_manual_answers(Path(out_path).parent / "manual-answers.json")
     attach_answers(questions, manual)
+    overrides = _load_manual_questions(Path(out_path).parent / "manual-questions.json")
+    _apply_manual_questions(questions, overrides)
     Path(out_path).write_text(
         json.dumps(questions, ensure_ascii=False, indent=2), encoding="utf-8")
     return questions

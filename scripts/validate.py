@@ -11,7 +11,9 @@ def validate_questions(questions):
         if set(q.get("options", {})) != {"A", "B", "C", "D"}:
             reasons.append("missing_option")
         ans = q.get("answer")
-        if ans is None:
+        if q.get("allCredit"):
+            pass  # 送分題：任選皆對，無單一答案
+        elif ans is None:
             reasons.append("missing_answer")
         elif ans not in ("A", "B", "C", "D"):
             reasons.append("bad_answer")
@@ -22,7 +24,7 @@ def validate_questions(questions):
 
 def count_report(questions):
     total = len(questions)
-    with_ans = sum(1 for q in questions if q.get("answer") is not None)
+    with_ans = sum(1 for q in questions if q.get("answer") is not None or q.get("allCredit"))
     by_subj = Counter(q.get("subject") for q in questions)
     return {"total": total, "with_answer": with_ans,
             "answer_rate": (with_ans / total) if total else 0.0,

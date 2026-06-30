@@ -34,3 +34,13 @@ def test_write_review_writes_valid_json(tmp_path):
     validate.write_review([{"id": "a", "reason": "missing_answer", "source": "x"}], out)
     data = json.loads(out.read_text(encoding="utf-8"))
     assert data[0]["id"] == "a" and data[0]["reason"] == "missing_answer"
+
+def test_validate_allcredit_not_flagged():
+    qs = [{"id": "x", "stem": "送分題", "answer": None, "allCredit": True,
+           "options": {"A": "1", "B": "2", "C": "3", "D": "4"}, "subject": "law"}]
+    assert validate.validate_questions(qs) == []
+
+def test_count_report_counts_allcredit_as_resolved():
+    qs = [{"id": "x", "stem": "s", "answer": None, "allCredit": True,
+           "options": {"A": "1", "B": "2", "C": "3", "D": "4"}, "subject": "law"}]
+    assert validate.count_report(qs)["with_answer"] == 1

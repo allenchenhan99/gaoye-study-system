@@ -4,6 +4,7 @@ raw/
 # 管線產出資料（除人工辨識的答案外）
 data/*
 !data/manual-answers.json
+!data/manual-questions.json
 .DS_Store
 # Node / 前端（階段 3）
 node_modules/
