@@ -22,7 +22,7 @@ def validate_questions(questions):
 
 def count_report(questions):
     total = len(questions)
-    with_ans = sum(1 for q in questions if q.get("answer"))
+    with_ans = sum(1 for q in questions if q.get("answer") is not None)
     by_subj = Counter(q.get("subject") for q in questions)
     return {"total": total, "with_answer": with_ans,
             "answer_rate": (with_ans / total) if total else 0.0,
@@ -30,4 +30,4 @@ def count_report(questions):
 
 def write_review(reviews, out_path):
     Path(out_path).parent.mkdir(parents=True, exist_ok=True)
-    Path(out_path).write_text(json.dumps(reviews, ensure_ascii=False, indent=2))
+    Path(out_path).write_text(json.dumps(reviews, ensure_ascii=False, indent=2), encoding="utf-8")
