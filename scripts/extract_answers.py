@@ -1,44 +1,26 @@
+# scripts/extract_answers.py
 import re
 from scripts.config import subject_from_text
 
-_INT = re.compile(r"\b(\d{1,2})\b")
-_LET = re.compile(r"\b([ABCD])\b")
-_ANS_HDR = re.compile(r".*(試題解答|標準答案).*")
+_ANS_HDR = re.compile(r"(試題解答|標準答案)")
+# 題號(1-2位) + 空白 + 單一答案字母；字母後不可接 "." 或英數字
+# （避免「44  A.B.C.D」這種均給分特例被誤讀成單一答案）
+_PAIR = re.compile(r"(\d{1,2})\s+([ABCD])(?![.\w])")
 
-def parse_answer_grid(text: str) -> dict:
-    nums = [int(x) for x in _INT.findall(text)]
-    lets = _LET.findall(text)
-    if not nums or len(nums) != len(lets):
-        return {}
-    if sorted(nums) != list(range(1, len(nums) + 1)):
-        return {}  # 題號須為 1..N 乾淨排列；有重複/雜散數字則拒絕（避免配對錯位）
-    return dict(zip(nums, lets))
-
-def _split_answer_sections(text: str):
-    lines = text.splitlines()
-    sections, cur_subj, buf = [], None, []
-    def flush():
-        if cur_subj and buf:
-            sections.append((cur_subj, "\n".join(buf)))
-    for line in lines:
-        s = line.strip()
-        subj = subject_from_text(s) if _ANS_HDR.match(s) else None
+def parse_answer_layout(text: str) -> dict:
+    """從 pdftotext -layout 的答案表文字解析 {subject: {num: letter}}。
+    依含「試題解答/標準答案」的科目標題行分段；段內每列抓所有 (題號, 字母) 配對。
+    跳過無法判定科目的內容；圖片型答案頁（無文字）自然回空字典。"""
+    res: dict = {}
+    cur = None
+    for line in text.splitlines():
+        subj = subject_from_text(line) if _ANS_HDR.search(line) else None
         if subj:
-            flush()
-            cur_subj, buf = subj, []
-        else:
-            buf.append(line)
-    flush()
-    return sections
-
-def parse_answer_file(text: str) -> dict:
-    out = {}
-    for subj, sec in _split_answer_sections(text):
-        grid = parse_answer_grid(sec)
-        if grid:
-            out[subj] = grid
-    return out
-
-def parse_embedded_answers(last_page_text: str, subject: str) -> dict:
-    grid = parse_answer_grid(last_page_text)
-    return {subject: grid} if grid else {}
+            cur = subj
+            res.setdefault(cur, {})
+            continue
+        if cur is None:
+            continue
+        for num, let in _PAIR.findall(line):
+            res[cur][int(num)] = let
+    return res

@@ -2,8 +2,10 @@ import re
 import subprocess
 from pathlib import Path
 
-def pdf_text(path, first=None, last=None) -> str:
+def pdf_text(path, first=None, last=None, layout=False):
     cmd = ["pdftotext"]
+    if layout:
+        cmd.append("-layout")
     if first is not None:
         cmd += ["-f", str(first)]
     if last is not None:

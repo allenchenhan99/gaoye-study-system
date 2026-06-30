@@ -28,3 +28,13 @@ def test_pdf_image_pages_parses_pdfimages(monkeypatch):
     class R: stdout = listing
     monkeypatch.setattr(pdfutils.subprocess, "run", lambda c, **k: R())
     assert pdfutils.pdf_image_pages("x.pdf") == [3, 7]
+
+def test_pdf_text_layout_flag(monkeypatch):
+    captured = {}
+    class R: stdout = "t"
+    def fake_run(cmd, **kw):
+        captured["cmd"] = cmd
+        return R()
+    monkeypatch.setattr(pdfutils.subprocess, "run", fake_run)
+    pdfutils.pdf_text("x.pdf", layout=True)
+    assert "-layout" in captured["cmd"]
