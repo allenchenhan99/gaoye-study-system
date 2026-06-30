@@ -2,7 +2,7 @@ import re
 from scripts.config import SUBJECTS, subject_from_text
 
 _SUBJ_HDR = re.compile(r"專業科目[：:].*")
-_Q_START = re.compile(r"^\s*(\d{1,2})[.。]\s*(.*)")   # "1." 或 "1。"
+_Q_START = re.compile(r"^\s*(\d{1,2})[.。](?!\d)\s*(.*)")  # "1."/"1。"，但不匹配小數如 "0.5"
 _OPT = re.compile(r"^\s*\(([ABCD])\)\s*(.*)")
 _STOP = re.compile(r"(試題解答|標準答案|^\s*解答\s*$)")
 _NOISE = re.compile(r"(請填|應試號碼|入場證|※|第\s*\d+\s*頁|共\s*\d+\s*頁|資格測驗試題)")

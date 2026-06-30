@@ -84,3 +84,11 @@ def test_parse_section_question_and_options_all_one_line():
     qs = eq.parse_section(sec)
     assert qs[0]["stem"] == "題幹敘述"
     assert qs[0]["options"] == {"A": "甲", "B": "乙", "C": "丙", "D": "丁"}
+
+def test_parse_section_decimal_continuation_not_new_question():
+    # 題幹續行以小數開頭（如「0.5，則…」）不可被當成新題號 0
+    sec = ("31. 甲乙股票相關係數為\n0.5，則共變數為：\n(A)0.04 (B)0.03 (C)0.02 (D)0.01\n")
+    qs = eq.parse_section(sec)
+    assert len(qs) == 1 and qs[0]["number"] == 31
+    assert "0.5，則共變數為：" in qs[0]["stem"]
+    assert qs[0]["options"] == {"A": "0.04", "B": "0.03", "C": "0.02", "D": "0.01"}
