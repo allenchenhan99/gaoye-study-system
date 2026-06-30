@@ -5,9 +5,13 @@ raw/
 data/*
 !data/manual-answers.json
 !data/manual-questions.json
+!data/explanations.json
 .DS_Store
 # Node / 前端（階段 3）
 node_modules/
 dist/
 __pycache__/
 *.pyc
+
+# 詳解生成中繼工作檔
+data/_explain_work/
