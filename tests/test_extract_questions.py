@@ -46,3 +46,24 @@ def test_extract_questions_builds_ids():
     assert "114-1-law-001" in ids and "114-1-investment-001" in ids
     q = next(q for q in qs if q["id"] == "114-1-law-001")
     assert q["subject"] == "law" and q["explanation"] is None and q["figures"] == []
+
+def test_parse_section_keeps_stem_with_zhuyi_continuation():
+    # 續行含「注意」不可被當雜訊丟棄（真實題幹如「應注意…」）
+    sec = ("1. 公開發行公司股東名簿變更記載，\n"
+           "應注意於股東常會開會前幾日內不得為之？\n"
+           "(A)十\n(B)十五\n(C)二十\n(D)三十\n")
+    qs = eq.parse_section(sec)
+    assert len(qs) == 1
+    assert "應注意於股東常會開會前幾日內不得為之？" in qs[0]["stem"]
+
+def test_parse_section_does_not_stop_on_inline_jieda():
+    # 題幹含「解答」二字不可觸發停止（只有獨立「解答」標題才停）
+    sec = ("1. 請解答下列問題，何者正確？\n(A)甲\n(B)乙\n(C)丙\n(D)丁\n"
+           "2. 第二題敘述？\n(A)甲\n(B)乙\n(C)丙\n(D)丁\n")
+    qs = eq.parse_section(sec)
+    assert len(qs) == 2
+
+def test_parse_section_stops_on_standalone_jieda_heading():
+    sec = ("1. 第一題？\n(A)甲\n(B)乙\n(C)丙\n(D)丁\n解答\n1\nA\n")
+    qs = eq.parse_section(sec)
+    assert len(qs) == 1
