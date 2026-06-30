@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from scripts import classify
 
@@ -29,3 +30,16 @@ def test_classify_old_file_is_question_with_embedded_answer():
     r = classify.classify_file(Path("raw/105/105Q2高業財務分析.pdf"), OLD_HEAD)
     assert r["era"] == "old" and r["is_question_file"] and not r["is_answer_file"]
     assert r["year"] == 105 and r["round"] == 4
+
+def test_build_manifest_writes_and_returns(tmp_path, monkeypatch):
+    from scripts import pdfutils
+    header = ('114 年第 1 次證券商高級業務員資格測驗試題\n'
+              '專業科目：證券投資與財務分析－試卷「投資學」')
+    monkeypatch.setattr(pdfutils, "pdf_text", lambda p, first=None, last=None: header)
+    out = tmp_path / "manifest.json"
+    res = classify.build_manifest([Path("raw/114/11401.pdf")], out)
+    assert out.exists()
+    data = json.loads(out.read_text(encoding="utf-8"))
+    assert data == res
+    assert res[0]["year"] == 114 and res[0]["round"] == 1 and res[0]["era"] == "new"
+    assert res[0]["is_question_file"] is True

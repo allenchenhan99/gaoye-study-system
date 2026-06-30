@@ -40,5 +40,5 @@ def build_manifest(pdf_paths, out_path) -> list[dict]:
         head = pdfutils.pdf_text(p, first=1, last=1)
         manifest.append(classify_file(p, head))
     Path(out_path).parent.mkdir(parents=True, exist_ok=True)
-    Path(out_path).write_text(json.dumps(manifest, ensure_ascii=False, indent=2))
+    Path(out_path).write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     return manifest
