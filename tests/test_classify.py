@@ -43,3 +43,9 @@ def test_build_manifest_writes_and_returns(tmp_path, monkeypatch):
     assert data == res
     assert res[0]["year"] == 114 and res[0]["round"] == 1 and res[0]["era"] == "new"
     assert res[0]["is_question_file"] is True
+
+def test_parse_header_normalizes_compat_ideograph():
+    # 106 Q3 真實表頭的「年」是相容表意字 U+F98E，需 NFKC 正規化才抓得到
+    weird = "106 年第 3 次證券商高級業務員資格測驗試題"
+    h = classify.parse_header(weird)
+    assert h["year"] == 106 and h["round"] == 3

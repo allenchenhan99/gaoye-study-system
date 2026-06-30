@@ -1,5 +1,6 @@
 import json
 import re
+import unicodedata
 from pathlib import Path
 from scripts import pdfutils
 
@@ -7,6 +8,7 @@ _HDR_RE = re.compile(r"(\d{3})\s*年第\s*(\d+)\s*次")
 _NUM_STEM = re.compile(r"^(\d{3})(\d{2})(a)?$")
 
 def parse_header(text: str) -> dict:
+    text = unicodedata.normalize("NFKC", text)
     m = _HDR_RE.search(text)
     year = int(m.group(1)) if m else None
     rnd = int(m.group(2)) if m else None
