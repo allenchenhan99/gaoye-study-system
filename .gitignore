@@ -1,9 +1,13 @@
 # 原始壓縮檔與解壓內容（體積大，不入版控）
 *.zip
 raw/
-# 管線產出資料
-data/
+# 管線產出資料（除人工辨識的答案外）
+data/*
+!data/manual-answers.json
+!data/manual-questions.json
 .DS_Store
 # Node / 前端（階段 3）
 node_modules/
 dist/
+__pycache__/
+*.pyc
