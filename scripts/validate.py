@@ -1,6 +1,9 @@
 import json
+import re
 from collections import Counter
 from pathlib import Path
+
+_ID_RE = re.compile(r"^\d{3}-\d-(law|investment|finance)-\d{3}$")
 
 def validate_questions(questions):
     reviews = []
@@ -17,6 +20,8 @@ def validate_questions(questions):
             reasons.append("missing_answer")
         elif ans not in ("A", "B", "C", "D"):
             reasons.append("bad_answer")
+        if q.get("year") is None or q.get("round") is None or not _ID_RE.match(q.get("id", "")):
+            reasons.append("bad_id")
         if reasons:
             reviews.append({"id": q.get("id"), "reason": ",".join(reasons),
                             "source": q.get("source")})

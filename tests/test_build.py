@@ -1,3 +1,5 @@
+import json
+from pathlib import Path
 from scripts import build
 
 def test_attach_answers_fills_by_key():
@@ -27,3 +29,23 @@ def test_apply_manual_questions_overrides_options_and_allcredit():
     ])
     assert qs[0]["options"]["A"] == "1"
     assert qs[1]["allCredit"] is True
+
+def test_build_questions_text_answer_wins_over_manual(tmp_path, monkeypatch):
+    from scripts import build, pdfutils
+    manifest = [
+        {"source": "q.pdf", "year": 114, "round": 1, "era": "new",
+         "is_answer_file": False, "is_question_file": True},
+        {"source": "a.pdf", "year": 114, "round": 1, "era": "new",
+         "is_answer_file": True, "is_question_file": False},
+    ]
+    qtext = "專業科目：證券交易相關法規與實務\n1. 題幹？\n(A)甲\n(B)乙\n(C)丙\n(D)丁\n"
+    atext = "證券交易相關法規與實務試題解答\n  1    B\n"
+    monkeypatch.setattr(pdfutils, "pdf_text",
+                        lambda path, first=None, last=None, layout=False: qtext if path == "q.pdf" else atext)
+    data = tmp_path / "data"; data.mkdir()
+    (data / "manual-answers.json").write_text(
+        json.dumps([{"year": 114, "round": 1, "subject": "law", "number": 1, "answer": "C"}]),
+        encoding="utf-8")
+    qs = build.build_questions(manifest, None, data / "questions.json")
+    q = next(x for x in qs if x["id"] == "114-1-law-001")
+    assert q["answer"] == "B"  # 文字答案(權威)勝出，人工答案不得覆蓋
