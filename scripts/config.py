@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 ROOT = Path(__file__).resolve().parent.parent
 ZIP_DIR = ROOT
@@ -12,7 +13,7 @@ SUBJECTS = {
     "finance": "證券投資與財務分析－財務分析",
 }
 
-def subject_from_text(text: str) -> str | None:
+def subject_from_text(text: str) -> Optional[str]:
     """從表頭/解答標題文字判定科目，靠括號標記避免誤判。"""
     if "「投資學」" in text:
         return "investment"
