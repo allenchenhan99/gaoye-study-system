@@ -10,6 +10,8 @@ def parse_answer_grid(text: str) -> dict:
     lets = _LET.findall(text)
     if not nums or len(nums) != len(lets):
         return {}
+    if sorted(nums) != list(range(1, len(nums) + 1)):
+        return {}  # 題號須為 1..N 乾淨排列；有重複/雜散數字則拒絕（避免配對錯位）
     return dict(zip(nums, lets))
 
 def _split_answer_sections(text: str):

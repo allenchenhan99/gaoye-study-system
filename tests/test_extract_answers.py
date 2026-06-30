@@ -21,3 +21,11 @@ def test_parse_answer_file_splits_subjects():
 def test_parse_embedded_answers():
     res = ea.parse_embedded_answers(GRID, "finance")
     assert res["finance"][3] == "A"
+
+def test_parse_answer_grid_rejects_stray_number():
+    # 頁碼 7 漏入使數量湊巧相等，但題號非乾淨 1..N → 應拒絕，避免靜默錯位
+    assert ea.parse_answer_grid("1\n2\n3\n7\nC\nD\nA\nB\n") == {}
+
+def test_parse_answer_grid_accepts_columnwise_order():
+    # 直欄排列（1,3,5,2,4）仍是 1..5 的排列，應正常配對
+    assert ea.parse_answer_grid("1\n3\n5\n2\n4\nA\nB\nC\nD\nA\n") == {1:"A",3:"B",5:"C",2:"D",4:"A"}
