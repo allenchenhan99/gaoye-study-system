@@ -22,34 +22,72 @@ export function ExamRunner({ questions, explanations, progress }: Props) {
       const c = answers[q.id];
       if (c) progress.answer(q, c);
     });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  const answeredCount = questions.filter((q) => answers[q.id]).length;
   const score = questions.filter((q) => answers[q.id] && isCorrect(q, answers[q.id])).length;
+  const pct = questions.length ? Math.round((score / questions.length) * 100) : 0;
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      <div className="flex justify-between items-center mb-4 sticky top-0 bg-gray-100 py-2 z-10">
-        <a href="#/" className="text-sm text-blue-600">← 首頁</a>
-        <span>模擬考（{questions.length} 題）</span>
-        {!submitted && <Timer minutes={progress.store.settings.examTimerMin} onExpire={submit} />}
-        {!submitted && <button className="px-3 py-1 bg-blue-600 text-white rounded" onClick={submit}>交卷</button>}
+    <div className="mx-auto max-w-2xl p-4 sm:p-6">
+      <div className="sticky top-0 z-10 -mx-4 mb-5 border-b border-line bg-paper/85 px-4 py-3 backdrop-blur-md sm:-mx-6 sm:px-6">
+        <div className="flex items-center justify-between gap-3">
+          <a href="#/" className="btn-ghost">
+            <span aria-hidden>←</span> 首頁
+          </a>
+          <div className="flex flex-col items-center leading-tight">
+            <span className="eyebrow">模擬考</span>
+            <span className="font-mono text-xs text-ink-faint">
+              {submitted ? `${questions.length} 題` : `${answeredCount} / ${questions.length}`}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            {!submitted && <Timer minutes={progress.store.settings.examTimerMin} onExpire={submit} />}
+            {!submitted && (
+              <button className="btn-primary px-4 py-2" onClick={submit}>
+                交卷
+              </button>
+            )}
+          </div>
+        </div>
       </div>
+
       {submitted && (
-        <div className="mb-4 p-3 bg-blue-50 rounded font-semibold">
-          得分：{score} / {questions.length}（{Math.round((score / questions.length) * 100)}%）
+        <div className="card animate-fade-rise mb-6 overflow-hidden text-center">
+          <div className="h-1 bg-gradient-to-r from-transparent via-gold to-transparent" />
+          <div className="p-6">
+            <div className="eyebrow">成績</div>
+            <p className="mt-3 font-serif text-lg text-ink-soft">
+              得分：
+              <span className="mx-1 text-4xl font-black tabular-nums text-pine">{score}</span>
+              <span className="text-ink-faint">/ {questions.length}</span>
+              <span className="ml-2 text-2xl font-bold tabular-nums text-gold-deep">{pct}%</span>
+            </p>
+          </div>
         </div>
       )}
-      <div className="space-y-4">
+
+      <div className="space-y-5">
         {questions.map((q) => (
-          <QuestionCard key={q.id} question={q} explanation={explanations.get(q.id)}
-            mode="deferred" selected={answers[q.id] ?? null} revealed={submitted}
+          <QuestionCard
+            key={q.id}
+            question={q}
+            explanation={explanations.get(q.id)}
+            mode="deferred"
+            selected={answers[q.id] ?? null}
+            revealed={submitted}
             onSelect={(c) => setAnswers((a) => ({ ...a, [q.id]: c }))}
             isFavorite={progress.store.favorites.includes(q.id)}
-            onToggleFavorite={() => progress.toggleFav(q.id)} />
+            onToggleFavorite={() => progress.toggleFav(q.id)}
+          />
         ))}
       </div>
+
       {!submitted && (
-        <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded w-full" onClick={submit}>交卷</button>
+        <button className="btn-primary mt-6 w-full" onClick={submit}>
+          交卷
+        </button>
       )}
     </div>
   );

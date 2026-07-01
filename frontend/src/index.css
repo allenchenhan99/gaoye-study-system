@@ -1,3 +1,101 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: "Noto Sans TC", system-ui, sans-serif;
+    color: #211e17;
+    background-color: #f4efe4;
+    /* 溫暖羊皮紙氛圍：頂部金色暈光 + 松綠冷光，疊一層極細顆粒 */
+    background-image:
+      radial-gradient(115% 75% at 50% -12%, rgba(184, 134, 47, 0.12), transparent 58%),
+      radial-gradient(90% 55% at 100% 0%, rgba(23, 73, 58, 0.07), transparent 55%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: "Noto Serif TC", Georgia, serif;
+    letter-spacing: 0.01em;
+  }
+
+  ::selection {
+    background: #17493a;
+    color: #f4efe4;
+  }
+
+  /* 細緻捲軸 */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #d2c7af transparent;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface border border-line rounded-xl2 shadow-card;
+  }
+
+  /* 主要行動按鈕：松綠 + 內光 + 懸浮微升 */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-pine px-6 py-3
+           font-medium tracking-wide text-paper shadow-card transition-all duration-200;
+  }
+  .btn-primary:hover {
+    @apply -translate-y-0.5 bg-pine-600 shadow-card-hover;
+  }
+  .btn-primary:active {
+    @apply translate-y-0;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-4 py-2
+           text-sm text-ink-soft transition-colors duration-150 hover:border-gold hover:text-ink;
+  }
+
+  /* 篩選膠囊 */
+  .pill {
+    @apply rounded-full border border-line bg-surface px-4 py-1.5 text-sm text-ink-soft
+           transition-all duration-150 hover:border-gold hover:text-ink;
+  }
+  .pill-on {
+    @apply border-pine bg-pine text-paper shadow-inset hover:border-pine hover:text-paper;
+  }
+
+  /* 小型金色眉標 */
+  .eyebrow {
+    @apply font-mono text-[0.7rem] uppercase tracking-[0.22em] text-gold-deep;
+  }
+
+  /* 詳解 markdown 版式（未安裝 typography plugin，手工排版） */
+  .explanation {
+    @apply text-[0.94rem] leading-7 text-ink-soft;
+  }
+  .explanation > :first-child { margin-top: 0; }
+  .explanation p { @apply my-2.5; }
+  .explanation strong { @apply font-semibold text-ink; }
+  .explanation ul { @apply my-2.5 space-y-1.5 pl-1; list-style: none; }
+  .explanation ul li { @apply relative pl-5; }
+  .explanation ul li::before {
+    content: "";
+    @apply absolute left-1 top-3 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-gold;
+  }
+  .explanation ol { @apply my-2.5 list-decimal space-y-1.5 pl-5; }
+  .explanation h1, .explanation h2, .explanation h3 {
+    @apply mb-1 mt-4 font-serif font-bold text-ink;
+  }
+  .explanation code {
+    @apply rounded bg-paper-deep px-1.5 py-0.5 font-mono text-[0.85em] text-pine;
+  }
+  .explanation blockquote {
+    @apply my-2.5 border-l-2 border-gold pl-3 text-ink-soft;
+  }
+}

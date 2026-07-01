@@ -16,6 +16,12 @@ const SUBJECTS: { key: Subject; label: string }[] = [
   { key: "finance", label: "財務分析" },
 ];
 
+const TITLE: Record<Props["mode"], string> = {
+  year: "年份練習",
+  random: "隨機練習",
+  subject: "科目練習",
+};
+
 export function PracticeSetup({ mode, questions, explanations, progress }: Props) {
   const [subject, setSubject] = useState<Subject | undefined>();
   const [year, setYear] = useState<number | undefined>();
@@ -27,6 +33,17 @@ export function PracticeSetup({ mode, questions, explanations, progress }: Props
     [questions]
   );
 
+  const available = useMemo(
+    () =>
+      questions.filter(
+        (q) =>
+          (subject === undefined || q.subject === subject) &&
+          (year === undefined || q.year === year) &&
+          (round === undefined || q.round === round)
+      ).length,
+    [questions, subject, year, round]
+  );
+
   if (queue) return <QuizRunner questions={queue} explanations={explanations} progress={progress} />;
 
   function start() {
@@ -34,48 +51,85 @@ export function PracticeSetup({ mode, questions, explanations, progress }: Props
     setQueue(sampleQuestions(questions, { subject, year, round, count }));
   }
 
-  const pillSelected = "bg-blue-600 text-white border-blue-600";
-  const pill = "px-3 py-1 rounded border border-gray-300";
-
   return (
-    <div className="max-w-md mx-auto p-4 space-y-4">
-      <a href="#/" className="text-sm text-blue-600">← 回首頁</a>
-      <h2 className="text-xl font-bold">
-        {mode === "year" ? "年份練習" : mode === "subject" ? "科目練習" : "隨機練習"}
-      </h2>
+    <div className="mx-auto max-w-lg p-4 sm:p-6">
+      <a href="#/" className="btn-ghost">
+        <span aria-hidden>←</span> 回首頁
+      </a>
 
-      {mode === "year" && (
-        <div className="space-y-2">
-          <div className="text-sm text-gray-600">年份</div>
+      <header className="mt-5">
+        <div className="eyebrow">設定練習</div>
+        <h2 className="mt-1 font-serif text-3xl font-black text-ink">{TITLE[mode]}</h2>
+      </header>
+
+      <div className="card mt-5 space-y-6 p-5 sm:p-6">
+        {mode === "year" && (
+          <>
+            <Field label="年份">
+              <div className="flex flex-wrap gap-2">
+                {years.map((y) => (
+                  <button
+                    key={y}
+                    className={`pill ${year === y ? "pill-on" : ""}`}
+                    onClick={() => setYear(year === y ? undefined : y)}
+                  >
+                    {y} 年
+                  </button>
+                ))}
+              </div>
+            </Field>
+            <Field label="次別">
+              <div className="flex flex-wrap gap-2">
+                {[1, 2, 3, 4].map((r) => (
+                  <button
+                    key={r}
+                    className={`pill ${round === r ? "pill-on" : ""}`}
+                    onClick={() => setRound(round === r ? undefined : r)}
+                  >
+                    第{r}次
+                  </button>
+                ))}
+              </div>
+            </Field>
+          </>
+        )}
+
+        <Field label={`科目${mode !== "subject" ? "（可不選＝全部）" : ""}`}>
           <div className="flex flex-wrap gap-2">
-            {years.map((y) => (
-              <button key={y} className={`${pill} ${year === y ? pillSelected : ""}`} onClick={() => setYear(y)}>{y} 年</button>
+            {SUBJECTS.map((s) => (
+              <button
+                key={s.key}
+                className={`pill ${subject === s.key ? "pill-on" : ""}`}
+                onClick={() => setSubject(subject === s.key ? undefined : s.key)}
+              >
+                {s.label}
+              </button>
             ))}
           </div>
-          <div className="text-sm text-gray-600">次別</div>
-          <div className="flex gap-2">
-            {[1, 2, 3, 4].map((r) => (
-              <button key={r} className={`${pill} ${round === r ? pillSelected : ""}`} onClick={() => setRound(r)}>第{r}次</button>
-            ))}
-          </div>
-        </div>
-      )}
+        </Field>
 
-      <div className="space-y-2">
-        <div className="text-sm text-gray-600">科目{mode !== "subject" ? "（可不選＝全部）" : ""}</div>
-        <div className="flex gap-2">
-          {SUBJECTS.map((s) => (
-            <button key={s.key} className={`${pill} ${subject === s.key ? pillSelected : ""}`}
-              onClick={() => setSubject(subject === s.key ? undefined : s.key)}>{s.label}</button>
-          ))}
+        <div className="flex items-center justify-between border-t border-line pt-4 text-sm">
+          <span className="text-ink-faint">
+            符合條件 <span className="font-mono font-semibold text-ink">{available}</span> 題
+          </span>
+          <span className="text-ink-faint">
+            {mode === "year" ? "整份作答" : `本輪 ${progress.store.settings.perRoundCount} 題`}
+          </span>
         </div>
       </div>
 
-      {mode !== "year" && (
-        <div className="text-sm text-gray-500">每輪題數：{progress.store.settings.perRoundCount} 題</div>
-      )}
+      <button className="btn-primary mt-6 w-full" onClick={start} disabled={available === 0}>
+        開始練習
+      </button>
+    </div>
+  );
+}
 
-      <button className="px-4 py-2 bg-green-600 text-white rounded w-full" onClick={start}>開始練習</button>
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-2.5">
+      <div className="eyebrow">{label}</div>
+      {children}
     </div>
   );
 }

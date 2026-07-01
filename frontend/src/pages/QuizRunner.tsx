@@ -18,18 +18,39 @@ export function QuizRunner({ questions, explanations, progress }: Props) {
   const [correctCount, setCorrectCount] = useState(0);
   const [done, setDone] = useState(false);
 
-  if (questions.length === 0) return <p className="p-4">此條件沒有題目。</p>;
-  if (done) {
+  if (questions.length === 0) {
     return (
-      <div className="p-4 max-w-2xl mx-auto">
-        <h2 className="text-xl font-bold mb-2">完成本輪！</h2>
-        <p>共 {questions.length} 題，答對 {correctCount} 題（{Math.round((correctCount / questions.length) * 100)}%）。</p>
-        <a href="#/" className="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded">回首頁</a>
+      <div className="mx-auto max-w-2xl p-6">
+        <div className="card p-8 text-center text-ink-soft">此條件沒有題目。</div>
+      </div>
+    );
+  }
+
+  if (done) {
+    const pct = Math.round((correctCount / questions.length) * 100);
+    return (
+      <div className="mx-auto max-w-2xl p-4 sm:p-6">
+        <div className="card animate-fade-rise overflow-hidden text-center">
+          <div className="h-1 bg-gradient-to-r from-transparent via-gold to-transparent" />
+          <div className="p-8 sm:p-10">
+            <div className="eyebrow">本輪完成</div>
+            <div className="mt-4 font-serif text-6xl font-black tabular-nums text-pine">{pct}%</div>
+            <p className="mt-3 text-ink-soft">
+              共 {questions.length} 題，答對{" "}
+              <span className="font-semibold text-ink">{correctCount}</span> 題。
+            </p>
+            <a href="#/" className="btn-primary mt-8">
+              回首頁
+            </a>
+          </div>
+        </div>
       </div>
     );
   }
 
   const q = questions[idx];
+  const last = idx + 1 >= questions.length;
+
   function handleSelect(c: Choice) {
     if (revealed) return;
     setSelected(c);
@@ -38,15 +59,19 @@ export function QuizRunner({ questions, explanations, progress }: Props) {
     if (isCorrect(q, c)) setCorrectCount((n) => n + 1);
   }
   function next() {
-    if (idx + 1 >= questions.length) { setDone(true); return; }
+    if (last) {
+      setDone(true);
+      return;
+    }
     setIdx((i) => i + 1);
     setSelected(null);
     setRevealed(false);
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
+    <div className="mx-auto max-w-2xl p-4 sm:p-6">
       <QuestionCard
+        key={q.id}
         question={q}
         explanation={explanations.get(q.id)}
         mode="immediate"
@@ -57,9 +82,12 @@ export function QuizRunner({ questions, explanations, progress }: Props) {
         onToggleFavorite={() => progress.toggleFav(q.id)}
       />
       {revealed && (
-        <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded" onClick={next}>
-          {idx + 1 >= questions.length ? "完成" : "下一題"}
-        </button>
+        <div className="mt-5 flex justify-end">
+          <button className="btn-primary" onClick={next}>
+            {last ? "完成" : "下一題"}
+            <span aria-hidden>→</span>
+          </button>
+        </div>
       )}
       <ProgressBar current={idx + 1} total={questions.length} />
     </div>
