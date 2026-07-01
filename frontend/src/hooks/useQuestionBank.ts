@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Question, Explanation } from "../lib/types";
 
-interface Bank {
+export interface Bank {
   questions: Question[];
   byId: Map<string, Question>;
   explanations: Map<string, Explanation>;
