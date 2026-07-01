@@ -42,7 +42,7 @@ export function ReviewBook({ kind, byId, explanations, progress }: Props) {
           {title} · <span className="font-mono font-semibold text-ink">{qs.length}</span> 題
         </span>
       </div>
-      <QuizRunner questions={qs} explanations={explanations} progress={progress} />
+      <QuizRunner key={kind} questions={qs} explanations={explanations} progress={progress} />
     </div>
   );
 }

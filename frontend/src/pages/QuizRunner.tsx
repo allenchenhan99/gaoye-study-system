@@ -12,13 +12,16 @@ interface Props {
 }
 
 export function QuizRunner({ questions, explanations, progress }: Props) {
+  // 一次性快照本輪題序：作答會改動 store（如答對後錯題本移除當題），
+  // 若直接吃 questions prop，清單縮短會讓當前題「跳掉」而看不到正解與詳解。
+  const [items] = useState(questions);
   const [idx, setIdx] = useState(0);
   const [selected, setSelected] = useState<Choice | null>(null);
   const [revealed, setRevealed] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
   const [done, setDone] = useState(false);
 
-  if (questions.length === 0) {
+  if (items.length === 0) {
     return (
       <div className="mx-auto max-w-2xl p-6">
         <div className="card p-8 text-center text-ink-soft">此條件沒有題目。</div>
@@ -27,7 +30,7 @@ export function QuizRunner({ questions, explanations, progress }: Props) {
   }
 
   if (done) {
-    const pct = Math.round((correctCount / questions.length) * 100);
+    const pct = Math.round((correctCount / items.length) * 100);
     return (
       <div className="mx-auto max-w-2xl p-4 sm:p-6">
         <div className="card animate-fade-rise overflow-hidden text-center">
@@ -36,7 +39,7 @@ export function QuizRunner({ questions, explanations, progress }: Props) {
             <div className="eyebrow">本輪完成</div>
             <div className="mt-4 font-serif text-6xl font-black tabular-nums text-pine">{pct}%</div>
             <p className="mt-3 text-ink-soft">
-              共 {questions.length} 題，答對{" "}
+              共 {items.length} 題，答對{" "}
               <span className="font-semibold text-ink">{correctCount}</span> 題。
             </p>
             <a href="#/" className="btn-primary mt-8">
@@ -48,8 +51,8 @@ export function QuizRunner({ questions, explanations, progress }: Props) {
     );
   }
 
-  const q = questions[idx];
-  const last = idx + 1 >= questions.length;
+  const q = items[idx];
+  const last = idx + 1 >= items.length;
 
   function handleSelect(c: Choice) {
     if (revealed) return;
@@ -89,7 +92,7 @@ export function QuizRunner({ questions, explanations, progress }: Props) {
           </button>
         </div>
       )}
-      <ProgressBar current={idx + 1} total={questions.length} />
+      <ProgressBar current={idx + 1} total={items.length} />
     </div>
   );
 }
