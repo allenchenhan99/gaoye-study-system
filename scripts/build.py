@@ -56,7 +56,7 @@ def _apply_manual_questions(questions, overrides):
             q["allCredit"] = True
     return questions
 
-def build_questions(manifest, raw_root, out_path) -> list:
+def build_questions(manifest, raw_root, out_path, manual_dir=None) -> list:
     questions = []
     for entry in manifest:
         if not entry["is_question_file"]:
@@ -66,10 +66,13 @@ def build_questions(manifest, raw_root, out_path) -> list:
             text, entry["year"], entry["round"], entry["source"])
     answers = _collect_answers(manifest, raw_root)
     attach_answers(questions, answers)
-    manual = _load_manual_answers(Path(out_path).parent / "manual-answers.json")
+    manual_root = Path(manual_dir) if manual_dir is not None else Path(out_path).parent
+    manual = _load_manual_answers(manual_root / "manual-answers.json")
     attach_answers(questions, manual)
-    overrides = _load_manual_questions(Path(out_path).parent / "manual-questions.json")
+    overrides = _load_manual_questions(manual_root / "manual-questions.json")
     _apply_manual_questions(questions, overrides)
-    Path(out_path).write_text(
+    output = Path(out_path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(
         json.dumps(questions, ensure_ascii=False, indent=2), encoding="utf-8")
     return questions

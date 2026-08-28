@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "archiveYears": [105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115],
+  "subjects": ["law", "investment", "finance"],
+  "questionsPerSubject": 50,
+  "expectedQuestionCount": 5400,
+  "sourceBatches": [
+    {
+      "years": [105, 106, 107, 108],
+      "rounds": [1, 2, 3, 4],
+      "questionPdfsPerRound": 3,
+      "answerPdfsPerRound": 0
+    },
+    {
+      "years": [109],
+      "rounds": [1, 2],
+      "questionPdfsPerRound": 3,
+      "answerPdfsPerRound": 0
+    },
+    {
+      "years": [109],
+      "rounds": [3, 4],
+      "questionPdfsPerRound": 1,
+      "answerPdfsPerRound": 1
+    },
+    {
+      "years": [110, 111, 112, 113, 114],
+      "rounds": [1, 2, 3],
+      "questionPdfsPerRound": 1,
+      "answerPdfsPerRound": 1
+    },
+    {
+      "years": [115],
+      "rounds": [1],
+      "questionPdfsPerRound": 1,
+      "answerPdfsPerRound": 1
+    }
+  ]
+}

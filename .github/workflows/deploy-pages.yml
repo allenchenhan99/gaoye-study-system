@@ -44,10 +44,10 @@ jobs:
       - name: Test migrations, RLS, and progress RPCs
         run: supabase test db supabase/tests/database/learning_progress_rls.test.sql
 
-      - name: Check database migration contract
+      - name: Test Python data pipeline and database contract
         run: |
-          python -m pip install pytest
-          python -m pytest tests/test_supabase_migration.py -q
+          python -m pip install -r requirements.txt
+          python -m pytest -q
 
       - name: Install dependencies
         working-directory: frontend

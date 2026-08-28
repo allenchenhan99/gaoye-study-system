@@ -3,72 +3,119 @@
 
   <h1>高業學習系統</h1>
 
-  <p><strong>把歷屆試題，變成能持續累積的個人學習紀錄。</strong></p>
-  <p>證券商高級業務員考古題練習平台 · A pixel study system built for focused practice.</p>
+  <p><strong>從歷屆試題 PDF，到可驗證題庫，再到能持續累積的個人學習紀錄。</strong></p>
+  <p>證券商高級業務員題庫資料管線與開源練習平台。</p>
 
   <p>
     <a href="https://allenchenhan99.github.io/gaoye-study-system/"><img src="https://img.shields.io/badge/OPEN_LIVE_APP-386493?style=for-the-badge&logo=githubpages&logoColor=white" alt="開啟線上版本"></a>
-    <a href="https://github.com/allenchenhan99/gaoye-study-system/actions/workflows/deploy-pages.yml"><img src="https://github.com/allenchenhan99/gaoye-study-system/actions/workflows/deploy-pages.yml/badge.svg" alt="部署狀態"></a>
+    <a href="https://github.com/allenchenhan99/gaoye-study-system/actions/workflows/deploy-pages.yml"><img src="https://github.com/allenchenhan99/gaoye-study-system/actions/workflows/deploy-pages.yml/badge.svg" alt="Pipeline 與部署狀態"></a>
   </p>
 </div>
 
+## 這個 repo 解決什麼
+
+這不是只有介面的題庫網站。Repository 的上游核心是一套 Python 資料管線：從歷屆試題檔案進行解壓、分類、文字抽取、答案合併、人工修正與資料驗證，再發布為單一 canonical question bank。React 前端只負責消費這份資料，提供練習、模擬考與個人進度介面。
+
+```mermaid
+flowchart LR
+    Raw["ZIP / PDF<br/>local only"] --> Extract[Extract]
+    Extract --> Classify[Classify]
+    Classify --> Build[Normalize + Merge Answers]
+    Manual["Manual Corrections<br/>tracked"] --> Build
+    Build --> Validate[Validate]
+    Validate --> Canonical["Canonical Dataset<br/>data/*.json"]
+    Canonical --> Vite[Vite Asset Pipeline]
+    Vite --> Web[React Study App]
+```
+
+### 資料邊界
+
+| 內容 | 儲存位置 | GitHub 是否包含 | 用途 |
+| --- | --- | --- | --- |
+| 原始 ZIP／PDF | 開發者本機 | 否 | Pipeline 輸入；因體積與來源限制不進版控 |
+| 抽取、分類、驗證程式 | `scripts/` | 是 | 將來源資料轉為結構化題庫 |
+| 人工答案與題目修正 | `data/manual-*.json` | 是 | 修正 OCR／圖片型答案與特殊題目 |
+| 來源覆蓋契約 | `data/source-coverage.json` | 是 | 定義完整 ZIP 年份、PDF 數量與題目分布 |
+| Canonical 題庫 | `data/questions.json`、`data/explanations.json` | 是 | Pipeline 的發布產物，也是前端唯一資料來源 |
+| 個人作答進度 | Supabase Postgres | 否 | 依登入使用者保存，受 RLS 隔離 |
+| 內部規劃文件 | 本機 `docs/plans`、`docs/superpowers` | 否 | 僅供本機開發，不參與建置或部署 |
+
+瀏覽器不會讀取開發者電腦裡的 PDF 或內部文件。Vite 在 build 時將 canonical JSON 發布為帶雜湊的靜態資產，網站再透過 HTTP 載入；使用者進度則走 Supabase，而不是 GitHub。
+
+## Data pipeline
+
+```text
+scripts/
+├── bigzip.py             # 解開來源壓縮檔
+├── classify.py           # 建立試題／答案檔 manifest
+├── extract_questions.py  # 解析題幹與選項
+├── extract_answers.py    # 解析文字型答案頁
+├── build.py              # 合併答案、人工修正與完整題目
+├── validate.py           # 找出缺答案、格式與品質問題
+├── source_coverage.py    # 阻擋不完整來源、PDF 或題目分布
+├── publish_dataset.py    # 產生瀏覽器使用的精簡 canonical dataset
+└── run_pipeline.py       # 端到端 pipeline entry point
+```
+
+### 執行與驗證
+
+原始考試 ZIP 不在 GitHub 內。要重建題庫，請先安裝 Python 3.12 與 Poppler（需要 `pdftotext`、`pdfinfo`、`pdfimages`），再將原始壓縮檔放在 repository root；檔名必須符合 `1*.zip`。
+
+macOS：
+
+```bash
+brew install poppler
+```
+
+Ubuntu / Debian：
+
+```bash
+sudo apt-get install poppler-utils
+```
+
+接著執行：
+
+```bash
+python -m pip install -r requirements.txt
+python -m scripts.run_pipeline
+python -m pytest -q
+```
+
+`run_pipeline` 會把含來源欄位的中間資料留在被忽略的 `data/_pipeline/`。只有 ZIP 年份、PDF 清單與題目分布完整符合 `data/source-coverage.json`，且格式、答案、唯一 ID 及不縮水保護全部通過後，才會以原子替換更新受版本控制的 `data/questions.json`；任一步失敗都會保留上一版 canonical dataset。CI 會執行完整 Python test suite 與 canonical dataset contract，確保目前 5,400 題、答案格式、ID 語意一致及詳解對應關係成立。
+
+## Learning app
+
 ![高業學習系統登入首頁](./assets/readme/hero.png)
 
-## 專案簡介
-
-高業學習系統是一套為證券商高級業務員測驗打造的開源練習工具。它將歷屆題庫、即時解析、錯題回顧與個人進度放進同一個工作流程，並以 1990 年代日系教學軟體為視覺語言，減少一般題庫網站的干擾感。
-
-登入後，每位使用者只會看到自己的作答紀錄、收藏與統計資料；進度可跨裝置同步，短暫離線時則由裝置快取承接。
-
-## 核心功能
+介面取材自 1990 年代日系教學軟體。登入後，每位使用者只會看到自己的作答紀錄、收藏與統計；進度可跨裝置同步，短暫離線時由依使用者隔離的裝置快取承接。
 
 | 練習 | 模擬考 | 複習 | 個人進度 |
 | --- | --- | --- | --- |
 | 依年份、科目或隨機抽題 | 50 題、60 分鐘完整流程 | 錯題本、收藏與逐題詳解 | Google 登入、跨裝置同步 |
-| 即時判分與答案說明 | 交卷後統一顯示結果 | 依答題狀態快速篩選 | 科目統計與本機離線保護 |
+| 即時判分與答案說明 | 交卷後統一顯示結果 | 依作答狀態快速篩選 | 科目統計與離線保護 |
 
-### 使用流程
-
-1. 使用 Google 帳號登入個人學習空間。
-2. 選擇年份、科目、隨機練習或模擬考。
-3. 作答後檢查答案與詳解。
-4. 回到錯題本、收藏與統計頁持續複習。
-
-> [!NOTE]
-> 題庫與詳解以考試複習為目的，可能因法規修訂、官方更正或資料整理而產生差異；應試時請以主管機關與正式考試公告為準。本專案不是主管機關或考試單位的官方服務。
-
-## 系統架構
+### Runtime architecture
 
 ```mermaid
 flowchart LR
+    Dataset[Canonical Dataset] --> App[React App]
     Google[Google OAuth] --> Auth[Supabase Auth]
-    Bank[Question Bank JSON] --> App[React Study App]
     Auth --> App
-    App --> Progress[Progress Sync]
-    Progress --> DB[(Postgres + RLS)]
-    Progress --> Cache[(Per-user Device Cache)]
+    App --> Sync[Progress Sync]
+    Sync --> DB[(Postgres + RLS)]
+    Sync --> Cache[(Per-user Device Cache)]
 ```
 
 | Layer | Stack |
 | --- | --- |
+| Pipeline | Python 3.12 · pytest · Poppler/PDF tools |
 | Web | React 18 · TypeScript · Vite · React Router |
-| UI | Tailwind CSS · 專案自有 Study System 元件 |
 | Auth | Supabase Auth · Google OAuth |
-| Data | Supabase Postgres · Row Level Security |
-| Testing | Vitest · React Testing Library · pytest · pgTAP |
+| Data | Static canonical JSON · Supabase Postgres · RLS |
+| Testing | pytest · Vitest · React Testing Library · pgTAP |
 | Delivery | GitHub Actions · GitHub Pages |
 
-## 本機開發
-
-### 需求
-
-- Node.js 20+
-- npm
-- Supabase 專案
-- Google Cloud OAuth 2.0 Client
-- Docker 與 Supabase CLI（僅本機資料庫／整合測試需要）
-
-### 啟動前端
+## 本機啟動前端
 
 ```bash
 git clone https://github.com/allenchenhan99/gaoye-study-system.git
@@ -101,22 +148,40 @@ VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_your_key
 
 </details>
 
-### 驗證
+### 前端與資料庫測試
 
 ```bash
-# 前端測試與正式建置
 cd frontend
 npm test
 npm run build
 
-# Python 題庫資料管線
 cd ..
-pytest
-
-# Supabase migration 與 RLS
 supabase db start
 supabase test db supabase/tests/database/learning_progress_rls.test.sql
 ```
+
+## Repository map
+
+```text
+gaoye-study-system/
+├── data/                 # Canonical dataset 與人工修正
+├── scripts/              # 題庫 extraction／validation／publishing pipeline
+├── tests/                # Pipeline 與資料 contract 測試
+├── frontend/             # Canonical dataset 的 React consumer
+├── supabase/             # 個人進度 schema、RLS、RPC 與 pgTAP
+└── .github/workflows/    # Pipeline quality gate 與 Pages deployment
+```
+
+## CI/CD quality gate
+
+每次 push 到 `main` 後，GitHub Actions 會依序執行：
+
+1. 啟動本機 Supabase，驗證 migration、RLS 與進度 RPC。
+2. 執行完整 Python pipeline test suite、資料 contract 與 migration tests。
+3. 執行 73 個前端測試。
+4. 驗證正式 Supabase 公開設定與 Google provider。
+5. 從 canonical dataset 建立 production assets。
+6. 所有檢查通過後才部署 GitHub Pages。
 
 ## 資料與隱私
 
@@ -128,34 +193,8 @@ supabase test db supabase/tests/database/learning_progress_rls.test.sql
 
 完整說明請見 [隱私權政策](https://allenchenhan99.github.io/gaoye-study-system/privacy.html)。
 
-<details>
-<summary><strong>Repository map</strong></summary>
-
-```text
-gaoye-study-system/
-├── data/                 # 人工校對答案與詳解來源
-├── frontend/
-│   ├── public/data/      # 正式網站載入的題庫
-│   └── src/
-│       ├── components/   # 共用 UI 元件
-│       ├── hooks/        # 題庫、登入與雲端進度
-│       ├── lib/          # 抽題、計分、型別與儲存邏輯
-│       └── pages/        # 練習、模考、複習與統計
-├── scripts/              # 題庫抽取、驗證與匯出管線
-├── supabase/             # Migration、RLS 與 pgTAP 測試
-└── tests/                # Python 資料管線測試
-```
-
-</details>
-
-## 部署
-
-Push 到 `main` 後，GitHub Actions 會先執行資料庫 contract、前端測試、Supabase 公開設定檢查與 production build；所有檢查通過後，才會把 `frontend/dist` 發布到 GitHub Pages。
-
-正式環境需要在 repository variables 設定：
-
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_PUBLISHABLE_KEY`
+> [!NOTE]
+> 題庫與詳解以考試複習為目的，可能因法規修訂、官方更正或資料整理而產生差異；應試時請以主管機關與正式考試公告為準。本專案不是主管機關或考試單位的官方服務。
 
 ## 回報問題
 

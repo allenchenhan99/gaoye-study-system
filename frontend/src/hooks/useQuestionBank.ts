@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Question, Explanation } from "../lib/types";
+import questionsUrl from "../../../data/questions.json?url";
+import explanationsUrl from "../../../data/explanations.json?url";
 
 export interface Bank {
   questions: Question[];
@@ -14,11 +16,10 @@ export function useQuestionBank(): Bank {
   });
   useEffect(() => {
     (async () => {
-      const base = import.meta.env.BASE_URL;
-      const qs: Question[] = await fetch(`${base}data/questions.json`).then((r) => r.json());
+      const qs: Question[] = await fetch(questionsUrl).then((r) => r.json());
       let exps: Explanation[] = [];
       try {
-        exps = await fetch(`${base}data/explanations.json`).then((r) => r.json());
+        exps = await fetch(explanationsUrl).then((r) => r.json());
       } catch {
         exps = [];
       }
