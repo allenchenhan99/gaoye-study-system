@@ -17,5 +17,10 @@ describe("SystemShell", () => {
     expect(screen.getByRole("main")).toHaveTextContent("統計內容");
     expect(screen.getByRole("contentinfo")).toHaveTextContent("LOCAL DATA READY");
     expect(screen.getByText("5,400 records")).toBeInTheDocument();
+
+    const supportLink = screen.getByRole("link", { name: "支持網站維護" });
+    expect(supportLink).toHaveAttribute("href", "https://buymeacoffee.com/allenchenhan99");
+    expect(supportLink).toHaveAttribute("target", "_blank");
+    expect(supportLink).toHaveAttribute("rel", "noreferrer");
   });
 });

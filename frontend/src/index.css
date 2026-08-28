@@ -86,8 +86,13 @@
 
   .system-menubar a:hover,
   .system-menubar a.is-active { @apply bg-crt text-document; }
+  .system-menubar a.system-support-link {
+    @apply ml-auto bg-instruction text-document;
+    box-shadow: inset 3px 3px 0 rgba(255,255,255,.24), inset -3px -3px 0 rgba(36,38,43,.25);
+  }
+  .system-menubar a.system-support-link:hover { @apply bg-warning text-document; }
   .system-menubar kbd { @apply font-mono text-[0.58rem] font-black; }
-  .system-edition { @apply ml-auto shrink-0 pr-2 font-mono text-[0.62rem] font-bold text-ink-faint; }
+  .system-edition { @apply shrink-0 pr-2 font-mono text-[0.62rem] font-bold text-ink-faint; }
 
   .system-main { @apply min-h-0 flex-1 bg-document; }
 

@@ -54,6 +54,16 @@ export function SystemShell({ bankSize, children }: SystemShellProps) {
             {item.label}
           </NavLink>
         ))}
+        <a
+          className="system-support-link"
+          href="https://buymeacoffee.com/allenchenhan99"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="支持網站維護"
+        >
+          <kbd aria-hidden="true">♥</kbd>
+          支持網站維護
+        </a>
         <span className="system-edition">114 年度版</span>
       </nav>
 
