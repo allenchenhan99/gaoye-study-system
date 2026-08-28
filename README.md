@@ -1,6 +1,6 @@
 # 高業學習系統
 
-[![Deploy frontend to GitHub Pages](https://github.com/allenchenhan99/gaoye-study-system/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/allenchenhan99/gaoye-study-system/actions/workflows/deploy-pages.yml) <a href="https://buymeacoffee.com/allenchenhan99"><img src="https://cdn.simpleicons.org/buymeacoffee/FFDD00" width="22" height="22" alt="Buy Me a Coffee"></a>
+[![Deploy frontend to GitHub Pages](https://github.com/allenchenhan99/gaoye-study-system/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/allenchenhan99/gaoye-study-system/actions/workflows/deploy-pages.yml) <a href="https://buymeacoffee.com/allenchenhan99"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="36" alt="Buy Me a Coffee"></a>
 
 為證券商高級業務員測驗打造的歷屆試題練習平台。介面取材自 1990 年代日系教學軟體，以清楚的題目文件、方形操作鍵與本機學習記錄，提供專注且快速的複習流程。
 
