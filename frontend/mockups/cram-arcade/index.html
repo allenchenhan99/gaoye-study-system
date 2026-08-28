@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#111a3a" />
+    <title>補習班街機｜高業考古題</title>
+    <link rel="stylesheet" href="../shared.css" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="cabinet">
+      <div class="cabinet-top" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <header class="marquee">
+        <a href="../index.html" class="exit-key">← EXIT</a>
+        <div class="logo">
+          <span class="pixel-type">證券商高級業務員</span>
+          <h1>補習班街機</h1>
+          <p>GAO-YE CRAM ARCADE</p>
+        </div>
+        <div class="credits"><span>題庫</span><b>5,400</b><small>CREDITS</small></div>
+      </header>
+
+      <main class="arcade-screen">
+        <section class="score-strip" aria-label="玩家紀錄">
+          <div><span>PLAYER</span><strong>考生 01</strong></div>
+          <div><span>SCORE</span><strong>032600</strong></div>
+          <div><span>ACCURACY</span><strong>78%</strong></div>
+          <div class="danger"><span>MISS</span><strong>18</strong></div>
+        </section>
+
+        <section class="select-stage" aria-labelledby="arcade-title">
+          <header>
+            <div class="arrow" aria-hidden="true">▶</div>
+            <div><span class="pixel-type">Select Mode</span><h2 id="arcade-title">今天要挑戰哪一關？</h2></div>
+            <div class="timer">TIME <b>99</b></div>
+          </header>
+
+          <div class="mode-grid">
+            <a class="mode year" href="#">
+              <span class="number">01</span>
+              <div class="mode-icon"><svg><use href="../assets/pixel-icons.svg#book"></use></svg></div>
+              <h3>年份練習</h3>
+              <p>選擇歷屆試卷</p>
+              <kbd>A</kbd>
+            </a>
+            <a class="mode random" href="#">
+              <span class="number">02</span>
+              <div class="mode-icon"><svg><use href="../assets/pixel-icons.svg#dice"></use></svg></div>
+              <h3>隨機練習</h3>
+              <p>全題庫快速抽題</p>
+              <kbd>B</kbd>
+            </a>
+            <a class="mode subject" href="#">
+              <span class="number">03</span>
+              <div class="mode-icon"><svg><use href="../assets/pixel-icons.svg#chart"></use></svg></div>
+              <h3>科目練習</h3>
+              <p>針對弱點連段</p>
+              <kbd>C</kbd>
+            </a>
+            <a class="mode exam selected" href="#">
+              <span class="number">04</span>
+              <div class="mode-icon"><svg><use href="../assets/pixel-icons.svg#timer"></use></svg></div>
+              <h3>模擬考</h3>
+              <p>50 題限時決勝</p>
+              <kbd>D</kbd>
+            </a>
+          </div>
+        </section>
+
+        <div class="lower-deck">
+          <section class="ranking">
+            <header><span>LOCAL RANKING</span><b>本機排行榜</b></header>
+            <ol>
+              <li><em>1ST</em><span>法規</span><b>81%</b></li>
+              <li><em>2ND</em><span>投資學</span><b>76%</b></li>
+              <li><em>3RD</em><span>財務分析</span><b>70%</b></li>
+            </ol>
+          </section>
+
+          <nav class="side-games" aria-label="複習工具">
+            <a href="#"><i>!</i><span>錯題本<small>18 QUESTIONS</small></span></a>
+            <a href="#"><i>★</i><span>收藏<small>24 QUESTIONS</small></span></a>
+            <a href="#"><i>↗</i><span>統計<small>VIEW RECORD</small></span></a>
+          </nav>
+        </div>
+
+        <a class="press-start" href="#">▶ PRESS START TO ENTER ◀</a>
+      </main>
+
+      <footer class="control-deck" aria-hidden="true">
+        <div class="joystick"><i></i></div>
+        <div class="insert">GAOYE KNOWLEDGE SYSTEM<br /><b>LOCAL SAVE ENABLED</b></div>
+        <div class="arcade-buttons"><i>A</i><i>B</i><i>C</i></div>
+      </footer>
+    </div>
+  </body>
+</html>
