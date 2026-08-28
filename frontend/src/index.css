@@ -180,6 +180,51 @@
   .lesson-row.is-recommended > span:nth-child(3) b { @apply text-[#d9e6f2]; }
   .lesson-row.is-recommended > span:last-child { @apply bg-instruction; }
 
+  .favorite-key {
+    @apply grid h-12 min-w-12 shrink-0 grid-rows-[1fr_auto] place-items-center border-[3px] border-charcoal bg-document px-2 text-lg font-black;
+    box-shadow: 3px 3px 0 #8f908b;
+  }
+
+  .favorite-key small { @apply font-mono text-[0.48rem] leading-none text-ink-faint; }
+  .favorite-key[data-active="true"] { @apply bg-warning text-document; }
+  .favorite-key[data-active="true"] small { @apply text-document; }
+
+  .answer-option {
+    @apply grid min-h-[58px] w-full grid-cols-[44px_1fr_38px] items-stretch border-[3px] border-charcoal bg-document p-0 text-left;
+    box-shadow: 4px 4px 0 #b5b4ae;
+    transition: transform 90ms steps(2,end), box-shadow 90ms steps(2,end);
+  }
+
+  .answer-option:not(:disabled):hover { transform: translate(2px,2px); box-shadow: 2px 2px 0 #b5b4ae; }
+  .answer-option-key { @apply grid place-items-center border-r-[3px] border-charcoal bg-machine font-mono text-base font-black; }
+  .answer-option-copy { @apply self-center px-3 py-2 text-sm font-bold leading-6 text-ink; }
+  .answer-option-status { @apply grid place-items-center bg-charcoal font-mono text-[0.58rem] font-black text-document; }
+
+  .answer-option[data-state="picked"] { @apply bg-[#dce7f1]; box-shadow: 4px 4px 0 #315c8c; }
+  .answer-option[data-state="picked"] .answer-option-key { @apply bg-crt text-document; }
+  .answer-option[data-state="correct"] { @apply border-correct bg-[#e0eee6]; box-shadow: 4px 4px 0 #2f7755; }
+  .answer-option[data-state="correct"] .answer-option-key,
+  .answer-option[data-state="correct"] .answer-option-status { @apply border-correct bg-correct text-document; }
+  .answer-option[data-state="wrong"] { @apply border-wrong bg-[#f2dddd]; box-shadow: 4px 4px 0 #c93636; }
+  .answer-option[data-state="wrong"] .answer-option-key,
+  .answer-option[data-state="wrong"] .answer-option-status { @apply border-wrong bg-wrong text-document; }
+  .answer-option[data-state="muted"] { @apply opacity-55; box-shadow: none; }
+  .answer-option:disabled { @apply cursor-default; }
+
+  .answer-verdict { @apply flex items-center gap-2 border-[3px] border-current bg-machine p-3 text-sm font-black; }
+  .answer-verdict[data-tone="correct"] { @apply text-correct; }
+  .answer-verdict[data-tone="wrong"] { @apply text-wrong; }
+
+  .system-timer {
+    @apply inline-grid min-h-10 grid-cols-[auto_1fr] items-center border-[3px] border-charcoal bg-document font-mono text-sm tabular-nums;
+    box-shadow: 3px 3px 0 #8f908b;
+  }
+
+  .system-timer-label { @apply self-stretch bg-charcoal px-2 py-2 font-mono text-[0.58rem] font-black text-document; }
+  .system-timer b { @apply min-w-[64px] px-2 text-center text-base; }
+  .system-timer[data-state="warning"] { @apply border-wrong text-wrong; box-shadow: 3px 3px 0 #c93636; }
+  .system-timer[data-state="warning"] .system-timer-label { @apply bg-wrong; }
+
   .card {
     @apply border-[3px] border-charcoal bg-document;
     box-shadow: 5px 5px 0 #b5b4ae;

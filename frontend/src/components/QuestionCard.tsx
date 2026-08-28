@@ -22,7 +22,7 @@ interface Props {
 }
 
 export function QuestionCard(props: Props) {
-  const { question: q, explanation, selected, revealed, onSelect, isFavorite, onToggleFavorite } = props;
+  const { question: q, explanation, mode, selected, revealed, onSelect, isFavorite, onToggleFavorite } = props;
   const answeredRight = !!selected && isCorrect(q, selected);
 
   function optionState(letter: Choice): "idle" | "picked" | "correct" | "wrong" | "muted" {
@@ -33,99 +33,76 @@ export function QuestionCard(props: Props) {
     return "muted";
   }
 
-  function optionClass(letter: Choice): string {
-    const base =
-      "group flex w-full items-start gap-3 rounded-xl border px-4 py-3 text-left transition-all duration-150";
-    switch (optionState(letter)) {
-      case "picked":
-        return `${base} border-pine bg-pine/[0.06] shadow-inset`;
-      case "correct":
-        return `${base} border-correct bg-correct-bg animate-pop`;
-      case "wrong":
-        return `${base} border-wrong bg-wrong-bg animate-shake`;
-      case "muted":
-        return `${base} border-line bg-surface opacity-60`;
-      default:
-        return `${base} border-line bg-surface-raised hover:-translate-y-px hover:border-gold hover:shadow-card`;
-    }
-  }
-
-  function badgeClass(letter: Choice): string {
-    const base =
-      "mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full border font-mono text-sm font-medium transition-colors";
-    switch (optionState(letter)) {
-      case "picked":
-        return `${base} border-pine bg-pine text-paper`;
-      case "correct":
-        return `${base} border-correct bg-correct text-paper`;
-      case "wrong":
-        return `${base} border-wrong bg-wrong text-paper`;
-      case "muted":
-        return `${base} border-line bg-paper text-ink-faint`;
-      default:
-        return `${base} border-line bg-paper text-ink-soft group-hover:border-gold group-hover:text-gold-deep`;
-    }
-  }
-
   return (
-    <article className="card animate-fade-rise overflow-hidden">
-      {/* 頂端金線 */}
-      <div className="h-1 bg-gradient-to-r from-gold/70 via-gold to-transparent" />
-      <div className="p-5 sm:p-6">
-        <header className="mb-4 flex items-start justify-between gap-3">
+    <article className="question-document system-window overflow-hidden border-l-[10px] border-l-instruction">
+      <header className="grid grid-cols-[1fr_auto] items-start gap-3 border-b-[3px] border-charcoal bg-machine p-3 sm:p-4">
+        <div className="flex min-w-0 items-start gap-4">
+          <span className="grid h-12 w-12 shrink-0 place-items-center border-[3px] border-charcoal bg-crt font-mono text-xl font-black text-document">
+            {String(q.number).padStart(2, "0")}
+          </span>
           <div className="min-w-0">
-            <span className="eyebrow">{SUBJECT_TAG[q.subject] ?? q.subject}</span>
+            <span className="system-label">QUESTION DATA / {SUBJECT_TAG[q.subject] ?? q.subject}</span>
             <p className="mt-1 font-mono text-xs text-ink-faint">
               {q.year} 年 {q.roundLabel} · 第 {q.number} 題
             </p>
+            <p className="mt-1 font-mono text-[0.58rem] font-bold text-crt">
+              {mode === "immediate" ? "INSTANT CHECK" : "DEFERRED CHECK"}
+            </p>
           </div>
-          <button
-            onClick={onToggleFavorite}
-            aria-label="收藏"
-            aria-pressed={isFavorite}
-            className={`grid h-9 w-9 shrink-0 place-items-center rounded-full border text-lg transition-all duration-150 ${
-              isFavorite
-                ? "border-gold bg-gold/10 text-gold"
-                : "border-line text-ink-faint hover:border-gold hover:text-gold"
-            }`}
-          >
-            {isFavorite ? "★" : "☆"}
-          </button>
-        </header>
+        </div>
+        <button
+          type="button"
+          onClick={onToggleFavorite}
+          aria-label="收藏"
+          aria-pressed={isFavorite}
+          className="favorite-key"
+          data-active={isFavorite ? "true" : "false"}
+        >
+          <span aria-hidden>{isFavorite ? "★" : "☆"}</span>
+          <small>FAV</small>
+        </button>
+      </header>
 
-        <p className="mb-5 whitespace-pre-wrap font-serif text-lg leading-8 text-ink">{q.stem}</p>
+      <div className="p-4 sm:p-6">
+        <p className="question-stem mb-6 whitespace-pre-wrap border-b-[3px] border-double border-line pb-5 text-lg font-bold leading-8 text-ink">
+          {q.stem}
+        </p>
 
-        <div className="space-y-2.5">
+        <div className="grid gap-3" aria-label="答案選項">
           {LETTERS.map((letter) => (
             <button
               key={letter}
-              className={optionClass(letter)}
+              type="button"
+              className="answer-option"
+              data-state={optionState(letter)}
               disabled={revealed}
               onClick={() => onSelect(letter)}
             >
-              <span className={badgeClass(letter)}>{letter}</span>
-              <span className="pt-0.5 leading-7 text-ink">{q.options[letter]}</span>
+              <span className="answer-option-key">{letter}</span>
+              <span className="answer-option-copy">{q.options[letter]}</span>
+              <span className="answer-option-status" aria-hidden>
+                {optionState(letter) === "correct" ? "OK" : optionState(letter) === "wrong" ? "NG" : "↵"}
+              </span>
             </button>
           ))}
         </div>
 
         {revealed && (
-          <div className="mt-5 border-t border-line pt-4">
+          <div className="mt-6 border-t-[3px] border-charcoal pt-4">
             {q.allCredit ? (
-              <div className="flex items-center gap-2 font-semibold text-correct">
+              <div className="answer-verdict" data-tone="correct">
                 <VerdictDot tone="correct" />
                 送分題（官方公告任選皆對）
               </div>
             ) : (
               <div
-                className={`flex items-center gap-2 font-semibold ${
-                  answeredRight ? "text-correct" : "text-wrong"
-                }`}
+                className="answer-verdict"
+                data-tone={answeredRight ? "correct" : "wrong"}
               >
                 <VerdictDot tone={answeredRight ? "correct" : "wrong"} />
                 {answeredRight ? "答對！" : "答錯"}
-                <span className="ml-1 font-normal text-ink-soft">
-                  正確答案：<span className="font-mono font-semibold text-ink">({q.answer})</span>
+                <span className="ml-1 font-normal">
+                  正確答案：<span className="font-mono font-black">[{q.answer}]</span>
                 </span>
               </div>
             )}
@@ -141,9 +118,7 @@ function VerdictDot({ tone }: { tone: "correct" | "wrong" }) {
   return (
     <span
       aria-hidden
-      className={`grid h-5 w-5 place-items-center rounded-full text-xs text-paper ${
-        tone === "correct" ? "bg-correct" : "bg-wrong"
-      }`}
+      className="grid h-6 w-6 place-items-center border-2 border-current bg-document font-mono text-xs font-black"
     >
       {tone === "correct" ? "✓" : "✕"}
     </span>

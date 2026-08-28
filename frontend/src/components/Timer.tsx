@@ -17,12 +17,13 @@ export function Timer({ minutes, onExpire }: { minutes: number; onExpire: () => 
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-sm tabular-nums ${
-        low ? "animate-pulse border-wrong/40 bg-wrong-bg text-wrong" : "border-line bg-surface text-ink-soft"
-      }`}
+      role="timer"
+      aria-label={`剩餘時間 ${m} 分 ${s} 秒`}
+      data-state={low ? "warning" : "normal"}
+      className="system-timer"
     >
-      <span aria-hidden className={`h-1.5 w-1.5 rounded-full ${low ? "bg-wrong" : "bg-pine-500"}`} />
-      {m}:{String(s).padStart(2, "0")}
+      <span className="system-timer-label">TIME</span>
+      <b>{m}:{String(s).padStart(2, "0")}</b>
     </span>
   );
 }

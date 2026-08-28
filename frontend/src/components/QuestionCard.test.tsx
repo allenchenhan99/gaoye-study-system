@@ -32,6 +32,9 @@ describe("QuestionCard", () => {
   it("reveals correct answer marker when revealed", () => {
     renderCard({ selected: "A", revealed: true });
     expect(screen.getByText(/正確答案/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /甲/ })).toHaveAttribute("data-state", "wrong");
+    expect(screen.getByRole("button", { name: /丙/ })).toHaveAttribute("data-state", "correct");
+    expect(screen.getByRole("button", { name: /乙/ })).toHaveAttribute("data-state", "muted");
   });
   it("shows 送分題 for allCredit when revealed", () => {
     renderCard({ question: { ...q, answer: null, allCredit: true }, selected: "A", revealed: true });
@@ -40,5 +43,18 @@ describe("QuestionCard", () => {
   it("shows placeholder when no explanation", () => {
     renderCard({ selected: "C", revealed: true });
     expect(screen.getByText(/詳解陸續補充中/)).toBeInTheDocument();
+  });
+  it("presents the explanation as a study-system data panel", () => {
+    renderCard({
+      selected: "C",
+      revealed: true,
+      explanation: { id: "x", explanation: "測試解析" },
+    });
+    expect(screen.getByText("詳解資料")).toBeInTheDocument();
+    expect(screen.getByText("測試解析")).toBeInTheDocument();
+  });
+  it("keeps the favorite control accessible", () => {
+    renderCard({ isFavorite: true });
+    expect(screen.getByRole("button", { name: "收藏" })).toHaveAttribute("aria-pressed", "true");
   });
 });
