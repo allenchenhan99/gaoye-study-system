@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <meta name="description" content="高業學習系統隱私權政策：說明 Google 登入與個人學習進度的蒐集、使用及刪除方式。" />
+    <title>隱私權政策｜高業學習系統</title>
+    <style>
+      :root {
+        color: #24262b;
+        background: #9b9b96;
+        font-family: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+        font-synthesis: none;
+      }
+      * { box-sizing: border-box; }
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        padding: 24px;
+        background-color: #9b9b96;
+        background-image: linear-gradient(90deg, rgba(255, 255, 255, .08) 1px, transparent 1px);
+        background-size: 5px 5px;
+      }
+      a { color: inherit; }
+      a:focus-visible { outline: 4px solid #c93636; outline-offset: 3px; }
+      .desktop {
+        width: min(920px, 100%);
+        margin: 0 auto;
+        border: 4px solid #24262b;
+        background: #f4f2e9;
+        box-shadow: 8px 8px 0 rgba(36, 38, 43, .28);
+      }
+      .titlebar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        min-height: 48px;
+        padding: 8px 12px;
+        border-bottom: 4px solid #24262b;
+        color: #f4f2e9;
+        background: #315c8c;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: .06em;
+      }
+      .lamp { width: 10px; height: 10px; background: #56a575; box-shadow: 0 0 0 2px #17371d; }
+      main { padding: clamp(24px, 5vw, 52px); }
+      .label {
+        margin: 0 0 10px;
+        color: #315c8c;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: .09em;
+      }
+      h1 { margin: 0; font-size: clamp(30px, 6vw, 46px); line-height: 1.1; letter-spacing: -.03em; }
+      .updated { margin: 12px 0 0; color: #656761; font-size: 13px; font-weight: 700; }
+      .summary {
+        margin: 28px 0;
+        padding: 18px;
+        border: 3px solid #24262b;
+        background: #dce7f1;
+        box-shadow: 4px 4px 0 #8f908b;
+        font-weight: 700;
+        line-height: 1.8;
+      }
+      section { margin-top: 34px; }
+      h2 {
+        display: grid;
+        grid-template-columns: 42px 1fr;
+        align-items: stretch;
+        margin: 0 0 14px;
+        border: 3px solid #24262b;
+        background: #f4f2e9;
+        font-size: 18px;
+      }
+      h2 b {
+        display: grid;
+        place-items: center;
+        border-right: 3px solid #24262b;
+        background: #d8d7d1;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 12px;
+      }
+      h2 span { padding: 10px 12px; }
+      p, li { color: #45474b; font-size: 15px; line-height: 1.85; }
+      ul { margin: 0; padding-left: 24px; }
+      li + li { margin-top: 8px; }
+      strong { color: #24262b; }
+      .contact {
+        padding: 16px;
+        border: 3px solid #315c8c;
+        background: #eef3f7;
+      }
+      .back {
+        display: inline-flex;
+        min-height: 44px;
+        align-items: center;
+        margin-top: 34px;
+        padding: 8px 14px;
+        border: 3px solid #24262b;
+        background: #d8d7d1;
+        box-shadow: 4px 4px 0 #8f908b;
+        font-weight: 900;
+        text-decoration: none;
+      }
+      .back:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #8f908b; }
+      footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 12px;
+        border-top: 4px solid #24262b;
+        background: #d8d7d1;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 10px;
+        font-weight: 900;
+      }
+      @media (max-width: 600px) {
+        body { padding: 10px; }
+        .titlebar span:nth-child(2), footer span:last-child { display: none; }
+        main { padding: 24px 18px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="desktop">
+      <header class="titlebar">
+        <span>PRIVACY.TXT</span>
+        <span>GAOYE STUDY SYSTEM 1993</span>
+        <span class="lamp" aria-hidden="true"></span>
+      </header>
+
+      <main>
+        <p class="label">PUBLIC DOCUMENT / READ ONLY</p>
+        <h1>高業學習系統隱私權政策</h1>
+        <p class="updated">生效日期：2026 年 8 月 29 日</p>
+
+        <p class="summary">
+          本系統使用 Google 登入辨識使用者，並以 Supabase 為每位使用者保存獨立的學習進度。
+          Google 登入不會讓其他使用者看到你的紀錄，也不會把所有人的進度存成網站擁有者的個人學習資料。
+        </p>
+
+        <section>
+          <h2><b>01</b><span>我們蒐集的資料</span></h2>
+          <ul>
+            <li><strong>Google 帳號基本資料：</strong>Google 提供的帳號識別碼、電子郵件地址、顯示名稱及頭像，用於建立與辨識登入工作階段。本系統不會取得你的 Google 密碼。</li>
+            <li><strong>學習進度：</strong>作答題號、答題結果、錯題、收藏、科目統計、模擬考紀錄、學習設定及同步操作識別碼。</li>
+            <li><strong>裝置快取：</strong>瀏覽器可能暫存個人進度與登入工作階段，供網路不穩時恢復與同步使用。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><b>02</b><span>資料用途</span></h2>
+          <p>上述資料只用於帳號登入、跨裝置同步、呈現個人練習紀錄，以及改善系統穩定性。我們不會出售個人資料，也不會將個人學習紀錄用於廣告投放。</p>
+        </section>
+
+        <section>
+          <h2><b>03</b><span>保存位置與使用者隔離</span></h2>
+          <p>
+            網站由 <strong>GitHub Pages</strong> 提供靜態頁面；登入及雲端資料由 <strong>Supabase</strong> 提供。
+            學習資料依 Supabase Auth 核發的使用者識別碼儲存，資料庫套用 Row Level Security（RLS），
+            因此每位使用者只能存取自己的資料。Google OAuth 僅作為登入身分提供者。
+          </p>
+        </section>
+
+        <section>
+          <h2><b>04</b><span>保存期限與刪除</span></h2>
+          <p>
+            個人進度會保留至使用者主動清除或提出帳號刪除要求。你可在登入後使用「清除所有進度」移除學習紀錄；
+            若要查詢、更正或刪除帳號及其相關資料，請使用下方聯絡方式提出要求。
+          </p>
+        </section>
+
+        <section>
+          <h2><b>05</b><span>第三方服務</span></h2>
+          <p>本系統使用 Google OAuth、Supabase 與 GitHub Pages。這些服務可能依各自的隱私權政策處理必要的登入、資料庫或網站傳輸資訊。</p>
+        </section>
+
+        <section>
+          <h2><b>06</b><span>聯絡方式</span></h2>
+          <p class="contact">隱私權、資料存取或刪除要求：<a href="mailto:allenchenhan99@gmail.com">allenchenhan99@gmail.com</a></p>
+        </section>
+
+        <a class="back" href="./">← 返回高業學習系統</a>
+      </main>
+
+      <footer>
+        <span>STATUS: PUBLIC</span>
+        <span>PRIVACY / GOOGLE AUTH / CLOUD PROGRESS</span>
+      </footer>
+    </div>
+  </body>
+</html>

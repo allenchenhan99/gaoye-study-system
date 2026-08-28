@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { defaultStore, recordAnswer, toggleFavorite, loadStore, saveStore } from "./store";
+import { defaultStore, recordAnswer, recordExam, toggleFavorite, loadStore, saveStore } from "./store";
 import type { Question } from "./types";
 
 const q: Question = {
@@ -34,6 +34,17 @@ describe("favorites", () => {
     expect(s.favorites).toContain("x");
     s = toggleFavorite(s, "x");
     expect(s.favorites).not.toContain("x");
+  });
+});
+
+describe("exam history", () => {
+  it("records a completed exam without mutating the previous store", () => {
+    const before = defaultStore();
+    const after = recordExam(before, { date: "2026-08-29T01:00:00.000Z", score: 42, total: 50 });
+    expect(before.examHistory).toEqual([]);
+    expect(after.examHistory).toEqual([
+      { date: "2026-08-29T01:00:00.000Z", score: 42, total: 50 },
+    ]);
   });
 });
 

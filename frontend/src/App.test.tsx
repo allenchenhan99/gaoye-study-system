@@ -2,6 +2,23 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import type { Question } from "./lib/types";
 
+const mocks = vi.hoisted(() => ({
+  useQuestionBank: vi.fn(),
+  auth: {
+    status: "authenticated" as "authenticated" | "anonymous" | "loading" | "unconfigured",
+    user: { id: "user-1", email: "learner@example.com", name: "Learner", avatarUrl: null } as {
+      id: string;
+      email: string | null;
+      name: string | null;
+      avatarUrl: string | null;
+    } | null,
+    busy: false,
+    error: null as string | null,
+    signIn: vi.fn(),
+    signOut: vi.fn(),
+  },
+}));
+
 // 用單題題庫取代真實 fetch，讓練習流程可決定性測試
 const q: Question = {
   id: "114-1-law-001",
@@ -17,12 +34,18 @@ const q: Question = {
 };
 
 vi.mock("./hooks/useQuestionBank", () => ({
-  useQuestionBank: () => ({
+  useQuestionBank: mocks.useQuestionBank,
+}));
+
+vi.mock("./hooks/useAuth", () => ({
+  useAuth: () => mocks.auth,
+}));
+
+mocks.useQuestionBank.mockImplementation(() => ({
     questions: [q],
     byId: new Map([[q.id, q]]),
     explanations: new Map(),
     loading: false,
-  }),
 }));
 
 import App from "./App";
@@ -31,13 +54,21 @@ describe("App 練習流程", () => {
   beforeEach(() => {
     localStorage.clear();
     window.location.hash = "#/practice/random";
+    mocks.auth.status = "authenticated";
+    mocks.auth.user = { id: "user-1", email: "learner@example.com", name: "Learner", avatarUrl: null };
+    mocks.auth.busy = false;
+    mocks.auth.error = null;
+    mocks.auth.signIn.mockClear();
+    mocks.auth.signOut.mockClear();
+    mocks.useQuestionBank.mockClear();
   });
 
   it("作答後停在原題顯示正解，不因 App 重繪而卸載重掛（回歸：答完跳掉）", () => {
     render(<App />);
 
     expect(screen.getByText("高業學習系統")).toBeInTheDocument();
-    expect(screen.getByRole("contentinfo")).toHaveTextContent("LOCAL DATA READY");
+    expect(screen.getByRole("contentinfo")).toHaveTextContent("DEVICE CACHE");
+    expect(screen.getByRole("button", { name: "learner@example.com，登出" })).toBeInTheDocument();
 
     // 進入設定頁 → 開始練習
     fireEvent.click(screen.getByText("開始練習"));
@@ -50,5 +81,22 @@ describe("App 練習流程", () => {
     expect(screen.getByText("題目一")).toBeInTheDocument();
     expect(screen.getByText(/正確答案/)).toBeInTheDocument();
     expect(screen.queryByText("開始練習")).not.toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem("gaoye-cloud-store-v1:user-1") ?? "null")).toMatchObject({
+      stats: { totalDone: 1 },
+    });
+    expect(localStorage.getItem("gaoye-store-v1")).toBeNull();
+  });
+
+  it("未登入只顯示專案首頁，不能透過 hash 直接進入練習", () => {
+    mocks.auth.status = "anonymous";
+    mocks.auth.user = null;
+    render(<App />);
+
+    expect(screen.getByText("證券商高級業務員考古題練習平台")).toBeInTheDocument();
+    expect(screen.queryByText("開始練習")).not.toBeInTheDocument();
+    expect(mocks.useQuestionBank).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("button", { name: "使用 Google 登入" }));
+    expect(mocks.auth.signIn).toHaveBeenCalledOnce();
   });
 });

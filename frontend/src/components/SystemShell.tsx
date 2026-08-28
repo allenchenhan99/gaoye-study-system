@@ -1,8 +1,16 @@
 import type { ReactNode } from "react";
 import { NavLink, useLocation } from "react-router-dom";
+import type { AuthUser } from "../hooks/useAuth";
+import type { SyncStatus } from "../hooks/useCloudProgress";
 
 interface SystemShellProps {
   bankSize: number;
+  user?: AuthUser;
+  onSignOut?: () => void | Promise<void>;
+  syncStatus?: SyncStatus;
+  syncError?: string | null;
+  accountBusy?: boolean;
+  accountError?: string | null;
   children: ReactNode;
 }
 
@@ -23,8 +31,18 @@ function routeStatus(pathname: string): string {
   return "HOME / LESSON SELECT";
 }
 
-export function SystemShell({ bankSize, children }: SystemShellProps) {
+export function SystemShell({
+  bankSize,
+  user,
+  onSignOut,
+  syncStatus,
+  syncError,
+  accountBusy,
+  accountError,
+  children,
+}: SystemShellProps) {
   const { pathname } = useLocation();
+  const syncLabel = getSyncLabel(syncStatus);
 
   return (
     <div className="system-desktop">
@@ -38,7 +56,7 @@ export function SystemShell({ bankSize, children }: SystemShellProps) {
           <span>GAOYE STUDY SYSTEM 1993</span>
         </div>
         <div className="drive-ready">
-          <span aria-hidden="true" /> LOCAL DATA READY
+          <span aria-hidden="true" /> {syncLabel}
         </div>
       </header>
 
@@ -64,16 +82,45 @@ export function SystemShell({ bankSize, children }: SystemShellProps) {
           <kbd aria-hidden="true">♥</kbd>
           支持網站維護
         </a>
+        {user && (
+          <button
+            type="button"
+            className="system-account-button"
+            disabled={accountBusy}
+            onClick={() => void onSignOut?.()}
+            aria-label={`${user.email ?? user.name ?? "使用者"}，登出`}
+            title="登出"
+          >
+            <span aria-hidden="true">●</span>
+            {user.name ?? user.email ?? "GOOGLE USER"}
+            <kbd>LOGOUT</kbd>
+          </button>
+        )}
         <span className="system-edition">114 年度版</span>
       </nav>
 
-      <main className="system-main">{children}</main>
+      <main className="system-main">
+        {accountError && (
+          <div className="account-warning" role="alert">{accountError}</div>
+        )}
+        {syncError && (
+          <div className="sync-warning" role="status">{syncError}</div>
+        )}
+        {children}
+      </main>
 
       <footer className="system-statusbar">
         <span><b>READY</b>　{routeStatus(pathname)}</span>
         <span>{bankSize.toLocaleString()} records</span>
-        <span>LOCAL DATA READY</span>
+        <span>{syncLabel}</span>
       </footer>
     </div>
   );
+}
+
+function getSyncLabel(status: SyncStatus | undefined): string {
+  if (status === "synced") return "CLOUD SYNC READY";
+  if (status === "loading" || status === "syncing") return "CLOUD SYNC...";
+  if (status === "error") return "DEVICE CACHE / RETRY";
+  return "DEVICE CACHE";
 }

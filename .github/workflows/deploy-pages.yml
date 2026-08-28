@@ -28,6 +28,27 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: 2.116.0
+
+      - name: Start test database
+        run: supabase db start
+
+      - name: Test migrations, RLS, and progress RPCs
+        run: supabase test db supabase/tests/database/learning_progress_rls.test.sql
+
+      - name: Check database migration contract
+        run: |
+          python -m pip install pytest
+          python -m pytest tests/test_supabase_migration.py -q
+
       - name: Install dependencies
         working-directory: frontend
         run: npm ci
@@ -36,8 +57,32 @@ jobs:
         working-directory: frontend
         run: npm test
 
+      - name: Validate Supabase deployment variables
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          test -n "$VITE_SUPABASE_URL" || { echo "Missing VITE_SUPABASE_URL repository variable"; exit 1; }
+          test -n "$VITE_SUPABASE_PUBLISHABLE_KEY" || { echo "Missing VITE_SUPABASE_PUBLISHABLE_KEY repository variable"; exit 1; }
+          case "$VITE_SUPABASE_URL" in
+            https://*.supabase.co) ;;
+            *) echo "VITE_SUPABASE_URL must be an HTTPS Supabase project URL"; exit 1 ;;
+          esac
+          case "$VITE_SUPABASE_PUBLISHABLE_KEY" in
+            *your_key*|*example*) echo "Supabase publishable key is still a placeholder"; exit 1 ;;
+            sb_publishable_*|eyJ*) ;;
+            *) echo "VITE_SUPABASE_PUBLISHABLE_KEY has an unsupported format"; exit 1 ;;
+          esac
+          curl --fail --silent --show-error --retry 2 \
+            -H "apikey: $VITE_SUPABASE_PUBLISHABLE_KEY" \
+            "${VITE_SUPABASE_URL%/}/auth/v1/settings" \
+            | python -c 'import json, sys; data = json.load(sys.stdin); assert data.get("external", {}).get("google") is True, "Google auth provider is not enabled"'
+
       - name: Build site
         working-directory: frontend
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
         run: npm run build -- --base="/${{ github.event.repository.name }}/"
 
       - name: Configure GitHub Pages
