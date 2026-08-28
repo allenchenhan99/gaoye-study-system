@@ -30,23 +30,23 @@ export function ExamRunner({ questions, explanations, progress }: Props) {
   const pct = questions.length ? Math.round((score / questions.length) * 100) : 0;
 
   return (
-    <div className="mx-auto max-w-2xl p-4 sm:p-6">
-      <div className="sticky top-0 z-10 -mx-4 mb-5 border-b border-line bg-paper/85 px-4 py-3 backdrop-blur-md sm:-mx-6 sm:px-6">
-        <div className="flex items-center justify-between gap-3">
-          <a href="#/" className="btn-ghost">
-            <span aria-hidden>←</span> 首頁
+    <div className="mx-auto max-w-3xl p-4 sm:p-6">
+      <div className="sticky top-0 z-10 -mx-4 mb-5 border-y-4 border-charcoal bg-machine px-4 py-2 sm:-mx-6 sm:px-6">
+        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 max-sm:grid-cols-[1fr_auto]">
+          <a href="#/" className="system-button min-h-10 px-3 py-1.5 max-sm:hidden">
+            <kbd className="font-mono text-[0.55rem]">ESC</kbd> 首頁
           </a>
-          <div className="flex flex-col items-center leading-tight">
-            <span className="eyebrow">模擬考</span>
-            <span className="font-mono text-xs text-ink-faint">
+          <div className="leading-tight sm:text-center">
+            <span className="system-label block">EXAM SESSION / 模擬考</span>
+            <span className="mt-1 block font-mono text-xs font-black text-ink">
               {submitted ? `${questions.length} 題` : `${answeredCount} / ${questions.length}`}
             </span>
           </div>
           <div className="flex items-center gap-2">
             {!submitted && <Timer minutes={progress.store.settings.examTimerMin} onExpire={submit} />}
             {!submitted && (
-              <button className="btn-primary px-4 py-2" onClick={submit}>
-                交卷
+              <button type="button" className="system-button-primary min-h-10 px-3 py-1.5" onClick={submit}>
+                交卷 <kbd className="font-mono text-[0.55rem]">F10</kbd>
               </button>
             )}
           </div>
@@ -54,18 +54,24 @@ export function ExamRunner({ questions, explanations, progress }: Props) {
       </div>
 
       {submitted && (
-        <div className="card animate-fade-rise mb-6 overflow-hidden text-center">
-          <div className="h-1 bg-gradient-to-r from-transparent via-gold to-transparent" />
-          <div className="p-6">
-            <div className="eyebrow">成績</div>
-            <p className="mt-3 font-serif text-lg text-ink-soft">
-              得分：
-              <span className="mx-1 text-4xl font-black tabular-nums text-pine">{score}</span>
-              <span className="text-ink-faint">/ {questions.length}</span>
-              <span className="ml-2 text-2xl font-bold tabular-nums text-gold-deep">{pct}%</span>
-            </p>
+        <section className="system-window mb-6 overflow-hidden" role="status" aria-label="模擬考成績">
+          <header className="flex justify-between border-b-[3px] border-charcoal bg-crt px-4 py-2 text-document">
+            <b className="font-mono text-xs">EXAM RESULT</b>
+            <span className="font-mono text-[0.58rem] font-bold">SUBMITTED</span>
+          </header>
+          <div className="grid items-center gap-5 p-5 sm:grid-cols-[140px_1fr]">
+            <div className="grid aspect-square place-items-center border-4 border-charcoal bg-machine text-center">
+              <span><small className="system-label block">SCORE</small><strong className="block font-mono text-5xl font-black text-crt">{pct}%</strong></span>
+            </div>
+            <div>
+              <h2 className="text-2xl font-black">考試完成</h2>
+              <p className="mt-3 border-y-[3px] border-double border-line py-3 text-ink-soft">
+                得分 <strong className="mx-1 font-mono text-3xl text-ink">{score}</strong> / {questions.length}
+              </p>
+              <p className="mt-3 font-mono text-[0.62rem] font-bold text-instruction">下方已顯示答案與詳解資料</p>
+            </div>
           </div>
-        </div>
+        </section>
       )}
 
       <div className="space-y-5">
@@ -85,8 +91,8 @@ export function ExamRunner({ questions, explanations, progress }: Props) {
       </div>
 
       {!submitted && (
-        <button className="btn-primary mt-6 w-full" onClick={submit}>
-          交卷
+        <button type="button" className="system-button-primary mt-6 w-full" onClick={submit}>
+          交卷 <kbd className="font-mono text-[0.58rem]">SUBMIT F10</kbd>
         </button>
       )}
     </div>
