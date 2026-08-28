@@ -3,99 +3,196 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    color: #24262b;
+    background: #9b9b96;
+    font-family: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+    font-synthesis: none;
+  }
+
+  * { box-sizing: border-box; }
+
   html {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    min-width: 320px;
+    background: #9b9b96;
     text-rendering: optimizeLegibility;
-    scroll-behavior: smooth;
   }
 
   body {
-    font-family: "Noto Sans TC", system-ui, sans-serif;
-    color: #211e17;
-    background-color: #f4efe4;
-    /* 溫暖羊皮紙氛圍：頂部金色暈光 + 松綠冷光，疊一層極細顆粒 */
-    background-image:
-      radial-gradient(115% 75% at 50% -12%, rgba(184, 134, 47, 0.12), transparent 58%),
-      radial-gradient(90% 55% at 100% 0%, rgba(23, 73, 58, 0.07), transparent 55%),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    background-attachment: fixed;
+    min-height: 100vh;
+    margin: 0;
+    color: #24262b;
+    background-color: #9b9b96;
+    background-image: linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px);
+    background-size: 5px 5px;
   }
 
-  h1, h2, h3, h4 {
-    font-family: "Noto Serif TC", Georgia, serif;
-    letter-spacing: 0.01em;
+  h1, h2, h3, h4 { letter-spacing: -0.025em; }
+  a { color: inherit; }
+  button, input, select, textarea { font: inherit; }
+  ::selection { color: #f4f2e9; background: #315c8c; }
+
+  :focus-visible {
+    outline: 4px solid #c93636;
+    outline-offset: 3px;
   }
 
-  ::selection {
-    background: #17493a;
-    color: #f4efe4;
-  }
-
-  /* 細緻捲軸 */
   * {
     scrollbar-width: thin;
-    scrollbar-color: #d2c7af transparent;
+    scrollbar-color: #777873 #d8d7d1;
   }
 }
 
 @layer components {
-  .card {
-    @apply bg-surface border border-line rounded-xl2 shadow-card;
+  .system-desktop {
+    @apply mx-auto flex min-h-screen w-full max-w-[1440px] flex-col border-x-4 border-charcoal bg-machine;
+    box-shadow: 10px 0 0 rgba(36,38,43,.25), -10px 0 0 rgba(36,38,43,.25);
   }
 
-  /* 主要行動按鈕：松綠 + 內光 + 懸浮微升 */
-  .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-pine px-6 py-3
-           font-medium tracking-wide text-paper shadow-card transition-all duration-200;
-  }
-  .btn-primary:hover {
-    @apply -translate-y-0.5 bg-pine-600 shadow-card-hover;
-  }
-  .btn-primary:active {
-    @apply translate-y-0;
+  .system-titlebar {
+    @apply grid min-h-[52px] grid-cols-[1fr_auto_1fr] items-center gap-4 border-b-4 border-charcoal bg-crt px-3 py-1.5 text-document;
   }
 
+  .window-controls { @apply flex items-center gap-1.5; }
+
+  .window-controls > span {
+    @apply block h-6 w-6 border-[3px] border-charcoal bg-machine;
+    box-shadow: inset 3px 3px 0 #fff, inset -3px -3px 0 #8d8d89;
+  }
+
+  .window-controls > span:last-child::after {
+    content: "";
+    @apply ml-1 mt-3 block h-[3px] w-2.5 bg-charcoal;
+  }
+
+  .system-app-name { @apply text-center leading-tight; }
+  .system-app-name strong { @apply block text-sm font-black; }
+  .system-app-name span { @apply mt-0.5 block font-mono text-[0.58rem] font-bold tracking-[0.08em]; }
+
+  .drive-ready { @apply flex items-center justify-self-end font-mono text-[0.62rem] font-bold; }
+  .drive-ready > span {
+    @apply mr-1.5 h-2 w-2 bg-correct;
+    box-shadow: 0 0 0 2px #17371d;
+  }
+
+  .system-menubar {
+    @apply flex min-h-10 items-center gap-1 overflow-x-auto border-b-[3px] border-charcoal bg-machine px-2;
+    box-shadow: inset 0 -3px 0 #92938e, inset 0 3px 0 #fff;
+  }
+
+  .system-menubar a {
+    @apply inline-flex min-h-8 shrink-0 items-center gap-1.5 px-2.5 text-xs font-bold no-underline;
+  }
+
+  .system-menubar a:hover,
+  .system-menubar a.is-active { @apply bg-crt text-document; }
+  .system-menubar kbd { @apply font-mono text-[0.58rem] font-black; }
+  .system-edition { @apply ml-auto shrink-0 pr-2 font-mono text-[0.62rem] font-bold text-ink-faint; }
+
+  .system-main { @apply min-h-0 flex-1 bg-document; }
+
+  .system-statusbar {
+    @apply grid min-h-9 grid-cols-[1fr_auto_auto] items-center gap-6 border-t-4 border-charcoal bg-machine px-3 py-1 font-mono text-[0.62rem] font-bold;
+    box-shadow: inset 0 3px 0 #fff;
+  }
+
+  .system-statusbar b { @apply text-instruction; }
+
+  .system-window {
+    @apply border-[3px] border-charcoal bg-document;
+    box-shadow: 5px 5px 0 #b5b4ae;
+  }
+
+  .system-panel { @apply border-[3px] border-charcoal bg-machine; }
+
+  .system-button,
   .btn-ghost {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-4 py-2
-           text-sm text-ink-soft transition-colors duration-150 hover:border-gold hover:text-ink;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 border-[3px] border-charcoal bg-machine px-4 py-2 text-sm font-black no-underline;
+    box-shadow: 4px 4px 0 #8f908b;
+    transition: transform 90ms steps(2,end), box-shadow 90ms steps(2,end);
   }
 
-  /* 篩選膠囊 */
+  .system-button:hover,
+  .btn-ghost:hover { transform: translate(2px,2px); box-shadow: 2px 2px 0 #8f908b; }
+
+  .system-button-primary,
+  .btn-primary {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 border-[3px] border-charcoal bg-instruction px-5 py-2.5 text-sm font-black tracking-wide text-document;
+    box-shadow: 4px 4px 0 #24262b;
+    transition: transform 90ms steps(2,end), box-shadow 90ms steps(2,end);
+  }
+
+  .system-button-primary:hover,
+  .btn-primary:hover { transform: translate(2px,2px); box-shadow: 2px 2px 0 #24262b; }
+  .system-button-primary:active,
+  .btn-primary:active { transform: translate(4px,4px); box-shadow: none; }
+  .system-button-primary:disabled,
+  .btn-primary:disabled { @apply cursor-not-allowed bg-ink-faint; box-shadow: none; transform: none; }
+
+  .system-tab,
   .pill {
-    @apply rounded-full border border-line bg-surface px-4 py-1.5 text-sm text-ink-soft
-           transition-all duration-150 hover:border-gold hover:text-ink;
-  }
-  .pill-on {
-    @apply border-pine bg-pine text-paper shadow-inset hover:border-pine hover:text-paper;
+    @apply min-h-11 border-[3px] border-charcoal bg-machine px-3 py-2 text-sm font-bold;
+    box-shadow: inset 3px 3px 0 #fff, inset -3px -3px 0 rgba(36,38,43,.22);
   }
 
-  /* 小型金色眉標 */
-  .eyebrow {
-    @apply font-mono text-[0.7rem] uppercase tracking-[0.22em] text-gold-deep;
+  .system-tab:hover,
+  .pill:hover { @apply bg-document; }
+  .system-tab-active,
+  .pill-on { @apply bg-crt text-document; box-shadow: inset 3px 3px 0 #1b354e; }
+
+  .system-label,
+  .eyebrow { @apply font-mono text-[0.66rem] font-black uppercase tracking-[0.08em] text-instruction; }
+
+  .status-cell { @apply border-[3px] border-charcoal bg-document p-3; }
+
+  .block-meter { @apply grid grid-cols-10 gap-[3px]; }
+  .block-meter > span { @apply h-5 border-2 border-[#8c8d88] bg-[#cecdc7]; }
+  .block-meter > span[data-filled="true"] { @apply border-[#1b354e] bg-crt; }
+
+  .system-table { @apply w-full border-collapse text-sm; }
+  .system-table th,
+  .system-table td { @apply border-b-2 border-line px-3 py-2 text-left; }
+  .system-table th { @apply bg-machine font-mono text-[0.62rem] uppercase tracking-wide text-ink-faint; }
+
+  .card {
+    @apply border-[3px] border-charcoal bg-document;
+    box-shadow: 5px 5px 0 #b5b4ae;
   }
 
-  /* 詳解 markdown 版式（未安裝 typography plugin，手工排版） */
-  .explanation {
-    @apply text-[0.94rem] leading-7 text-ink-soft;
-  }
+  .explanation { @apply text-[0.94rem] leading-7 text-ink-soft; }
   .explanation > :first-child { margin-top: 0; }
   .explanation p { @apply my-2.5; }
   .explanation strong { @apply font-semibold text-ink; }
   .explanation ul { @apply my-2.5 space-y-1.5 pl-1; list-style: none; }
   .explanation ul li { @apply relative pl-5; }
-  .explanation ul li::before {
-    content: "";
-    @apply absolute left-1 top-3 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-gold;
-  }
+  .explanation ul li::before { content: "■"; @apply absolute left-0 top-0 text-[0.55rem] text-instruction; }
   .explanation ol { @apply my-2.5 list-decimal space-y-1.5 pl-5; }
-  .explanation h1, .explanation h2, .explanation h3 {
-    @apply mb-1 mt-4 font-serif font-bold text-ink;
-  }
-  .explanation code {
-    @apply rounded bg-paper-deep px-1.5 py-0.5 font-mono text-[0.85em] text-pine;
-  }
-  .explanation blockquote {
-    @apply my-2.5 border-l-2 border-gold pl-3 text-ink-soft;
+  .explanation h1,
+  .explanation h2,
+  .explanation h3 { @apply mb-1 mt-4 font-black text-ink; }
+  .explanation code { @apply border border-line bg-machine px-1.5 py-0.5 font-mono text-[0.85em] text-crt; }
+  .explanation blockquote { @apply my-2.5 border-l-4 border-instruction pl-3 text-ink-soft; }
+}
+
+@media (max-width: 640px) {
+  .system-desktop { @apply border-x-0; box-shadow: none; }
+  .system-titlebar { @apply grid-cols-[auto_1fr] px-2; }
+  .system-app-name { @apply justify-self-end text-right; }
+  .system-app-name span,
+  .drive-ready { @apply hidden; }
+  .system-menubar { @apply px-1; }
+  .system-menubar a { @apply px-2; }
+  .system-menubar kbd,
+  .system-edition { @apply hidden; }
+  .system-statusbar { @apply grid-cols-[1fr_auto] gap-3 px-2; }
+  .system-statusbar span:last-child { @apply hidden; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
   }
 }
