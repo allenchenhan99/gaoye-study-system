@@ -36,6 +36,9 @@ describe("App 練習流程", () => {
   it("作答後停在原題顯示正解，不因 App 重繪而卸載重掛（回歸：答完跳掉）", () => {
     render(<App />);
 
+    expect(screen.getByText("高業學習系統")).toBeInTheDocument();
+    expect(screen.getByRole("contentinfo")).toHaveTextContent("LOCAL DATA READY");
+
     // 進入設定頁 → 開始練習
     fireEvent.click(screen.getByText("開始練習"));
     expect(screen.getByText("題目一")).toBeInTheDocument();

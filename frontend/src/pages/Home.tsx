@@ -1,149 +1,163 @@
 import { Link } from "react-router-dom";
+import { BlockMeter } from "../components/BlockMeter";
 import type { useLocalProgress } from "../hooks/useLocalProgress";
+import type { Subject } from "../lib/types";
 
-interface ModeItem {
+interface Lesson {
   to: string;
   label: string;
-  desc: string;
-  glyph: string;
-  accent?: boolean;
+  description: string;
+  meta: string;
+  keyLabel: string;
 }
 
-const PRACTICE: ModeItem[] = [
-  { to: "/practice/year", label: "年份練習", desc: "選年份 · 次別 · 科目", glyph: "◷" },
-  { to: "/practice/random", label: "隨機練習", desc: "全題庫隨機抽題", glyph: "⁙" },
-  { to: "/practice/subject", label: "科目練習", desc: "三科擇一深耕", glyph: "❖" },
+const LESSONS: Lesson[] = [
+  { to: "/practice/year", label: "年份練習", description: "依年度、次別與科目開啟完整試卷。", meta: "11 YEARS", keyLabel: "ENTER" },
+  { to: "/practice/random", label: "隨機練習", description: "從全部題庫抽出 20 題快速複習。", meta: "20 ITEMS", keyLabel: "ENTER" },
+  { to: "/practice/subject", label: "科目練習", description: "法規、投資學、財務分析，選一科集中練習。", meta: "3 SUBJECTS", keyLabel: "ENTER" },
+  { to: "/exam", label: "模擬考", description: "50 題、60 分鐘，交卷後檢視完整解析。", meta: "60 MIN", keyLabel: "START" },
 ];
 
-const REVIEW: ModeItem[] = [
-  { to: "/review/wrong", label: "錯題本", desc: "答錯自動收錄", glyph: "✎" },
-  { to: "/review/favorites", label: "收藏", desc: "標星題目重練", glyph: "★" },
-  { to: "/stats", label: "統計", desc: "作答與正確率", glyph: "◔" },
+const SUBJECTS: { key: Subject; label: string }[] = [
+  { key: "law", label: "證券交易法規" },
+  { key: "investment", label: "證券投資學" },
+  { key: "finance", label: "財務分析" },
 ];
 
-export function Home({
-  progress,
-  bankSize,
-}: {
+interface HomeProps {
   progress: ReturnType<typeof useLocalProgress>;
   bankSize: number;
-}) {
+}
+
+export function Home({ progress, bankSize }: HomeProps) {
   const { totalDone, perSubject } = progress.store.stats;
-  const correct = perSubject.law.correct + perSubject.investment.correct + perSubject.finance.correct;
-  const overall = totalDone ? Math.round((correct / totalDone) * 100) : 0;
+  const totalCorrect = SUBJECTS.reduce((sum, subject) => sum + perSubject[subject.key].correct, 0);
+  const overall = totalDone ? Math.round((totalCorrect / totalDone) * 100) : 0;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 pb-16 pt-8 sm:px-6">
-      {/* Hero */}
-      <header className="animate-fade-rise">
-        <div className="eyebrow">證券商 · 高級業務員</div>
-        <h1 className="mt-2 font-serif text-[2.6rem] font-black leading-[1.1] text-ink sm:text-5xl">
-          考古題
-          <span className="relative ml-1 inline-block text-pine">
-            應試精練
-            <span className="absolute -bottom-1 left-0 h-[3px] w-full bg-gradient-to-r from-gold to-transparent" />
-          </span>
-        </h1>
-        <p className="mt-4 max-w-xl leading-7 text-ink-soft">
-          {bankSize.toLocaleString()} 題歷屆試題，逐題官方答案與詳解。即時對錯、模擬計時、錯題自動收錄，進度存於本機。
-        </p>
-      </header>
+    <div className="grid min-h-[720px] grid-cols-[270px_minmax(0,1fr)] max-[820px]:block">
+      <aside className="flex flex-col border-r-4 border-charcoal bg-machine p-5 max-[820px]:border-b-4 max-[820px]:border-r-0 max-[820px]:p-3">
+        <div className="border-b-[3px] border-double border-line pb-5 max-[820px]:flex max-[820px]:items-center max-[820px]:gap-4 max-[820px]:pb-3">
+          <span className="system-label">EDITION 1.14</span>
+          <div className="system-disk mt-5 max-[820px]:mt-0" aria-hidden="true"><span /></div>
+          <div>
+            <h1 className="mt-4 text-[2rem] font-black leading-none max-[820px]:mt-0 max-[820px]:text-xl">高業<br className="max-[820px]:hidden" />考古題</h1>
+            <p className="mt-2 text-xs text-ink-soft">證券商高級業務員</p>
+          </div>
+        </div>
 
-      {/* 進度條 */}
-      <div
-        className="card animate-fade-rise mt-7 flex flex-wrap items-center gap-x-8 gap-y-4 p-5 sm:p-6"
-        style={{ animationDelay: "60ms" }}
-      >
-        <Metric label="已作答" value={totalDone} unit="題" />
-        <Divider />
-        <Metric label="正確率" value={overall} unit="%" tone="pine" />
-        <Divider />
-        <Metric label="錯題本" value={progress.store.wrongBook.length} unit="題" tone="wrong" />
-        <Link to="/exam" className="btn-primary ml-auto">
-          開始模擬考 <span aria-hidden>→</span>
-        </Link>
-      </div>
+        <nav className="mt-5 grid border-[3px] border-charcoal max-[820px]:mt-3 max-[820px]:grid-cols-4 max-[540px]:grid-cols-2" aria-label="章節索引">
+          <IndexLink to="/" number="01" label="開始學習" active />
+          <IndexLink to="/review/wrong" number="02" label="錯題本" count={progress.store.wrongBook.length} />
+          <IndexLink to="/review/favorites" number="03" label="收藏" count={progress.store.favorites.length} />
+          <IndexLink to="/stats" number="04" label="統計" />
+        </nav>
 
-      {/* 練習模式 */}
-      <Section title="題庫練習" />
-      <div className="grid gap-4 sm:grid-cols-3">
-        {PRACTICE.map((m, i) => (
-          <ModeCard key={m.to} item={m} delay={120 + i * 55} />
-        ))}
-      </div>
+        <div className="mt-auto bg-charcoal p-4 text-document max-[820px]:mt-3">
+          <span className="block font-mono text-[0.58rem] font-bold">QUESTION DATABASE</span>
+          <strong className="my-2 block font-mono text-3xl font-black text-[#9BC7F0]">{bankSize.toLocaleString()}</strong>
+          <small className="block font-mono text-[0.58rem]">records indexed</small>
+        </div>
+      </aside>
 
-      <Section title="複習與追蹤" />
-      <div className="grid gap-4 sm:grid-cols-3">
-        {REVIEW.map((m, i) => (
-          <ModeCard key={m.to} item={m} delay={300 + i * 55} />
-        ))}
-      </div>
+      <section className="p-8 max-md:p-4">
+        <header className="flex items-end justify-between gap-5 border-b-4 border-charcoal pb-4">
+          <div>
+            <span className="system-label">LESSON SELECT / PAGE 01</span>
+            <h2 className="mt-2 text-2xl font-black sm:text-3xl">請選擇今天的學習方式</h2>
+            <p className="mt-1 text-sm text-ink-faint">進度會自動儲存在這台裝置。</p>
+          </div>
+          <div className="font-mono text-5xl font-black text-crt max-sm:text-4xl">01<small className="text-xs text-ink-faint">/06</small></div>
+        </header>
 
-      <div className="mt-10 flex justify-center">
-        <button
-          className="text-sm text-ink-faint underline decoration-line underline-offset-4 transition-colors hover:text-wrong"
-          onClick={() => {
-            if (confirm("確定清除所有進度？")) progress.clearAll();
-          }}
-        >
-          清除所有進度
-        </button>
-      </div>
+        <section className="system-window mt-5 grid grid-cols-[180px_minmax(160px,1fr)_90px] items-center gap-5 p-4 max-sm:grid-cols-[1fr_70px]" aria-label="目前學習進度">
+          <div>
+            <span className="system-label">學習進度</span>
+            <strong className="mt-1 block text-sm">{totalDone.toLocaleString()} 題完成</strong>
+            <small className="font-mono text-[0.56rem] text-ink-faint">OVERALL ACCURACY</small>
+          </div>
+          <BlockMeter value={overall} label="整體正確率" className="max-sm:col-span-2 max-sm:row-start-2" />
+          <div className="text-right font-mono" data-overall-rate aria-label={`整體正確率 ${overall}%`}>
+            <strong className="text-3xl font-black text-crt">{overall}</strong><span className="font-black">%</span>
+          </div>
+        </section>
+
+        <ol className="mt-5 grid gap-2">
+          {LESSONS.map((lesson, index) => (
+            <li key={lesson.to}>
+              <Link
+                to={lesson.to}
+                className={`lesson-row system-window grid min-h-[78px] grid-cols-[70px_minmax(170px,1fr)_110px_80px] items-stretch no-underline max-sm:grid-cols-[58px_1fr_58px] ${lesson.to === "/exam" ? "is-recommended" : ""}`}
+              >
+                <span className="grid place-items-center border-r-2 border-charcoal bg-machine p-2 text-center font-mono text-[0.58rem] font-bold">
+                  {lesson.to === "/exam" ? "EXAM" : "LESSON"}<b className="block text-lg">{String(index + 1).padStart(2, "0")}</b>
+                </span>
+                <span className="p-3">
+                  <strong className="block text-base">{lesson.label}</strong>
+                  <small className="mt-1 block text-xs leading-5 text-ink-soft">{lesson.description}</small>
+                </span>
+                <span className="self-center font-mono text-[0.58rem] font-bold text-ink-faint max-sm:hidden">MODE<br /><b className="text-ink">{lesson.meta}</b></span>
+                <span className="grid place-items-center bg-charcoal px-2 font-mono text-[0.58rem] font-bold text-document">{lesson.keyLabel} ↵</span>
+              </Link>
+            </li>
+          ))}
+        </ol>
+
+        <section className="mt-6 border-t-[3px] border-charcoal pt-3" aria-label="科目別成績">
+          <header className="mb-2 flex justify-between font-mono text-[0.62rem] font-bold">
+            <span className="text-instruction">SUBJECT RECORD</span><b>科目別成績</b>
+          </header>
+          <div className="grid gap-2">
+            {SUBJECTS.map((subject) => {
+              const record = perSubject[subject.key];
+              const rate = record.done ? Math.round((record.correct / record.done) * 100) : 0;
+              return (
+                <div key={subject.key} className="grid grid-cols-[130px_1fr_90px] items-center gap-3 text-xs max-sm:grid-cols-[100px_1fr_72px]">
+                  <span>{subject.label}</span>
+                  <BlockMeter value={rate} label={`${subject.label}正確率`} />
+                  <em className="font-mono font-bold not-italic text-right">{record.correct} / {record.done}</em>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        <div className="mt-6 flex justify-end">
+          <button
+            className="system-button text-wrong"
+            onClick={() => {
+              if (confirm("確定清除所有進度？")) progress.clearAll();
+            }}
+          >
+            清除所有進度
+          </button>
+        </div>
+      </section>
     </div>
   );
 }
 
-function ModeCard({ item, delay }: { item: ModeItem; delay: number }) {
+function IndexLink({
+  to,
+  number,
+  label,
+  count,
+  active = false,
+}: {
+  to: string;
+  number: string;
+  label: string;
+  count?: number;
+  active?: boolean;
+}) {
   return (
     <Link
-      to={item.to}
-      style={{ animationDelay: `${delay}ms` }}
-      className="card animate-fade-rise group relative overflow-hidden p-5 transition-all duration-200 hover:-translate-y-1 hover:border-gold hover:shadow-card-hover"
+      to={to}
+      className={`grid min-h-[52px] grid-cols-[32px_1fr_auto] items-center border-b-2 border-charcoal px-2 text-sm font-bold no-underline last:border-b-0 max-[820px]:border-b-0 max-[820px]:border-r-2 max-[540px]:border-b-2 ${active ? "bg-crt text-document" : "bg-document hover:bg-machine"}`}
     >
-      <div className="flex items-center justify-between">
-        <span className="grid h-11 w-11 place-items-center rounded-full border border-line bg-paper text-xl text-pine transition-colors group-hover:border-gold group-hover:text-gold-deep">
-          {item.glyph}
-        </span>
-        <span className="text-ink-faint transition-transform duration-200 group-hover:translate-x-1">→</span>
-      </div>
-      <h3 className="mt-4 font-serif text-xl font-bold text-ink">{item.label}</h3>
-      <p className="mt-1 text-sm text-ink-soft">{item.desc}</p>
+      <b className="font-mono text-[0.62rem]">{number}</b>
+      <span>{label}</span>
+      {count !== undefined && <small className="font-mono text-[0.58rem]">{count}</small>}
     </Link>
   );
-}
-
-function Section({ title }: { title: string }) {
-  return (
-    <div className="mb-4 mt-10 flex items-center gap-3">
-      <h2 className="eyebrow">{title}</h2>
-      <span className="h-px flex-1 bg-line" />
-    </div>
-  );
-}
-
-function Metric({
-  label,
-  value,
-  unit,
-  tone,
-}: {
-  label: string;
-  value: number;
-  unit: string;
-  tone?: "pine" | "wrong";
-}) {
-  const color = tone === "pine" ? "text-pine" : tone === "wrong" ? "text-wrong" : "text-ink";
-  return (
-    <div>
-      <div className="eyebrow">{label}</div>
-      <div className={`mt-1 font-serif text-3xl font-black tabular-nums ${color}`}>
-        {value}
-        <span className="ml-0.5 text-base font-normal text-ink-faint">{unit}</span>
-      </div>
-    </div>
-  );
-}
-
-function Divider() {
-  return <span className="hidden h-10 w-px bg-line sm:block" />;
 }

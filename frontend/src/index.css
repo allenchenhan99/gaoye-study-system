@@ -154,6 +154,32 @@
   .system-table td { @apply border-b-2 border-line px-3 py-2 text-left; }
   .system-table th { @apply bg-machine font-mono text-[0.62rem] uppercase tracking-wide text-ink-faint; }
 
+  .system-disk {
+    @apply relative h-[68px] w-[76px] border-4 border-charcoal bg-charcoal;
+    box-shadow: 5px 5px 0 #8b8c87;
+  }
+
+  .system-disk::before {
+    content: "";
+    @apply absolute left-[13px] top-0 h-7 w-[42px] border-x-[3px] border-b-[3px] border-charcoal bg-machine;
+  }
+
+  .system-disk::after {
+    content: "";
+    @apply absolute bottom-2 left-3 right-3 h-[18px] border-[3px] border-charcoal bg-document;
+  }
+
+  .system-disk > span { @apply absolute right-[18px] top-1 z-10 h-[18px] w-2 bg-[#6a6b67]; }
+
+  .lesson-row { transition: transform 90ms steps(2,end), box-shadow 90ms steps(2,end); }
+  .lesson-row:hover { transform: translate(2px,2px); box-shadow: 3px 3px 0 #8f908b; }
+  .lesson-row.is-recommended { @apply bg-crt text-document; box-shadow: 5px 5px 0 #1a3149; }
+  .lesson-row.is-recommended > span:first-child { @apply bg-document text-charcoal; }
+  .lesson-row.is-recommended small,
+  .lesson-row.is-recommended > span:nth-child(3),
+  .lesson-row.is-recommended > span:nth-child(3) b { @apply text-[#d9e6f2]; }
+  .lesson-row.is-recommended > span:last-child { @apply bg-instruction; }
+
   .card {
     @apply border-[3px] border-charcoal bg-document;
     box-shadow: 5px 5px 0 #b5b4ae;

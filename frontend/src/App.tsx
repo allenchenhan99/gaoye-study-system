@@ -9,6 +9,7 @@ import { ExamRunner } from "./pages/ExamRunner";
 import { ReviewBook } from "./pages/ReviewBook";
 import { Stats } from "./pages/Stats";
 import { sampleQuestions } from "./lib/sampling";
+import { SystemShell } from "./components/SystemShell";
 
 type Progress = ReturnType<typeof useLocalProgress>;
 
@@ -54,62 +55,35 @@ export default function App() {
 
   return (
     <HashRouter>
-      <div className="flex min-h-screen flex-col">
-        <TopBar />
-        <main className="flex-1">
-          <Routes>
-            <Route path="/" element={<Home progress={progress} bankSize={bank.questions.length} />} />
-            <Route path="/practice/:mode" element={<PracticeRoute bank={bank} progress={progress} />} />
-            <Route
-              path="/exam"
-              element={
-                <ExamRunner questions={examQuestions} explanations={bank.explanations} progress={progress} />
-              }
-            />
-            <Route path="/review/:kind" element={<ReviewRoute bank={bank} progress={progress} />} />
-            <Route path="/stats" element={<Stats progress={progress} />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
+      <SystemShell bankSize={bank.questions.length}>
+        <Routes>
+          <Route path="/" element={<Home progress={progress} bankSize={bank.questions.length} />} />
+          <Route path="/practice/:mode" element={<PracticeRoute bank={bank} progress={progress} />} />
+          <Route
+            path="/exam"
+            element={
+              <ExamRunner questions={examQuestions} explanations={bank.explanations} progress={progress} />
+            }
+          />
+          <Route path="/review/:kind" element={<ReviewRoute bank={bank} progress={progress} />} />
+          <Route path="/stats" element={<Stats progress={progress} />} />
+        </Routes>
+      </SystemShell>
     </HashRouter>
-  );
-}
-
-function TopBar() {
-  return (
-    <header className="border-b border-line/70">
-      <div className="mx-auto flex max-w-3xl items-center gap-2.5 px-4 py-3 sm:px-6">
-        <a href="#/" className="flex items-center gap-2.5">
-          <span className="grid h-7 w-7 place-items-center rounded-md bg-pine font-serif text-sm font-black text-paper">
-            高
-          </span>
-          <span className="font-serif text-base font-bold tracking-wide text-ink">高業考古題</span>
-        </a>
-        <span className="ml-auto eyebrow hidden sm:block">應試精練</span>
-      </div>
-    </header>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="mt-auto border-t border-line/70">
-      <div className="mx-auto max-w-3xl px-4 py-6 text-center text-xs text-ink-faint sm:px-6">
-        歷屆題庫僅供複習之用 · 答案與詳解以主管機關公告為準 · 進度儲存於本機瀏覽器
-      </div>
-    </footer>
   );
 }
 
 function LoadingScreen() {
   return (
-    <div className="grid min-h-screen place-items-center">
-      <div className="flex flex-col items-center gap-4">
-        <span className="grid h-12 w-12 animate-pulse place-items-center rounded-lg bg-pine font-serif text-lg font-black text-paper">
-          高
-        </span>
-        <p className="font-mono text-sm tracking-widest text-ink-faint">題庫載入中…</p>
+    <div className="grid min-h-screen place-items-center bg-machine p-4">
+      <div className="system-window w-full max-w-sm p-5">
+        <div className="system-label">DISK A: READING</div>
+        <div className="mt-4 grid grid-cols-8 gap-1" aria-hidden="true">
+          {Array.from({ length: 8 }, (_, index) => (
+            <span key={index} className="h-5 border-2 border-charcoal bg-crt" />
+          ))}
+        </div>
+        <p className="mt-4 font-mono text-sm font-bold text-ink-soft">題庫載入中…</p>
       </div>
     </div>
   );
