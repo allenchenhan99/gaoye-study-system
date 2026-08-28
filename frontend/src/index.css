@@ -83,6 +83,8 @@
     box-shadow: 3px 3px 0 #8f908b;
   }
   .coffee-icon-link:hover { @apply bg-document; transform: translate(2px,2px); box-shadow: 1px 1px 0 #8f908b; }
+  .public-policy-link { @apply border-b-2 border-current text-instruction no-underline; }
+  .public-policy-link:hover { @apply bg-instruction text-document; }
 
   .system-desktop {
     @apply mx-auto flex min-h-screen w-full max-w-[1440px] flex-col border-x-4 border-charcoal bg-machine;

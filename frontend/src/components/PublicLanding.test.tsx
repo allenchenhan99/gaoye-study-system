@@ -18,6 +18,10 @@ describe("PublicLanding", () => {
     expect(screen.getByText("證券商高級業務員考古題練習平台")).toBeInTheDocument();
     const loginButton = screen.getByRole("button", { name: "使用 Google 登入" });
     expect(screen.getAllByRole("button")).toHaveLength(1);
+    expect(screen.getByRole("link", { name: "隱私權政策" })).toHaveAttribute(
+      "href",
+      "./privacy.html"
+    );
 
     fireEvent.click(loginButton);
     expect(signIn).toHaveBeenCalledOnce();

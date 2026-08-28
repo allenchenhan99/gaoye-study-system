@@ -62,8 +62,9 @@ export function PublicLanding({ configured, busy, error, onSignIn }: PublicLandi
           </section>
 
           <div className="mt-6 flex items-center justify-between gap-4 border-t-2 border-line pt-4">
-            <p className="font-mono text-[0.62rem] font-bold text-ink-faint">
-              OPEN SOURCE · RESPONSIVE · CLOUD SYNC
+            <p className="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[0.62rem] font-bold text-ink-faint">
+              <span>OPEN SOURCE · RESPONSIVE · CLOUD SYNC</span>
+              <a className="public-policy-link" href="./privacy.html">隱私權政策</a>
             </p>
             <a
               className="coffee-icon-link"
