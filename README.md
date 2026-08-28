@@ -67,13 +67,13 @@ public/data/*.json ──► 題庫／練習／詳解 │
 git clone https://github.com/allenchenhan99/gaoye-study-system.git
 cd gaoye-study-system/frontend
 npm ci
-cp .env.example .env.local
+cp .env.example .env.development.local
 npm run dev
 ```
 
 Vite 啟動後會在終端顯示本機網址，預設通常為 `http://localhost:5173/`。
 
-在 `frontend/.env.local` 填入 Supabase 專案的公開連線設定：
+在 `frontend/.env.development.local` 填入 Supabase 專案的公開連線設定。使用 development-only env 可避免 Vitest 誤連到正式 Supabase：
 
 ```dotenv
 VITE_SUPABASE_URL=https://your-project-ref.supabase.co
