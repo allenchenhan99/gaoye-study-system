@@ -52,25 +52,34 @@ export function PracticeSetup({ mode, questions, explanations, progress }: Props
   }
 
   return (
-    <div className="mx-auto max-w-lg p-4 sm:p-6">
-      <a href="#/" className="btn-ghost">
-        <span aria-hidden>←</span> 回首頁
-      </a>
-
-      <header className="mt-5">
-        <div className="eyebrow">設定練習</div>
-        <h2 className="mt-1 font-serif text-3xl font-black text-ink">{TITLE[mode]}</h2>
+    <div className="mx-auto max-w-3xl p-4 sm:p-8">
+      <header className="flex items-end justify-between gap-4 border-b-4 border-charcoal pb-4">
+        <div>
+          <span className="system-label">SETUP / PAGE 02</span>
+          <h2 className="mt-2 text-3xl font-black text-ink">{TITLE[mode]}</h2>
+          <p className="mt-1 text-sm text-ink-faint">選取條件後，按下 START 建立本輪題目。</p>
+        </div>
+        <a href="#/" className="system-button shrink-0">
+          <kbd className="font-mono text-[0.58rem]">ESC</kbd> 回首頁
+        </a>
       </header>
 
-      <div className="card mt-5 space-y-6 p-5 sm:p-6">
+      <section className="system-window mt-6 overflow-hidden" aria-label={`${TITLE[mode]}設定`}>
+        <div className="flex items-center justify-between border-b-[3px] border-charcoal bg-crt px-4 py-2 text-document">
+          <b className="font-mono text-xs">PRACTICE CONFIGURATION</b>
+          <span className="font-mono text-[0.58rem] font-bold">MODE:{mode.toUpperCase()}</span>
+        </div>
+        <div className="grid gap-6 p-4 sm:p-6">
         {mode === "year" && (
           <>
             <Field label="年份">
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
                 {years.map((y) => (
                   <button
+                    type="button"
                     key={y}
-                    className={`pill ${year === y ? "pill-on" : ""}`}
+                    className={`system-tab ${year === y ? "system-tab-active" : ""}`}
+                    aria-pressed={year === y}
                     onClick={() => setYear(year === y ? undefined : y)}
                   >
                     {y} 年
@@ -79,11 +88,13 @@ export function PracticeSetup({ mode, questions, explanations, progress }: Props
               </div>
             </Field>
             <Field label="次別">
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {[1, 2, 3, 4].map((r) => (
                   <button
+                    type="button"
                     key={r}
-                    className={`pill ${round === r ? "pill-on" : ""}`}
+                    className={`system-tab ${round === r ? "system-tab-active" : ""}`}
+                    aria-pressed={round === r}
                     onClick={() => setRound(round === r ? undefined : r)}
                   >
                     第{r}次
@@ -95,11 +106,13 @@ export function PracticeSetup({ mode, questions, explanations, progress }: Props
         )}
 
         <Field label={`科目${mode !== "subject" ? "（可不選＝全部）" : ""}`}>
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
             {SUBJECTS.map((s) => (
               <button
+                type="button"
                 key={s.key}
-                className={`pill ${subject === s.key ? "pill-on" : ""}`}
+                className={`system-tab ${subject === s.key ? "system-tab-active" : ""}`}
+                aria-pressed={subject === s.key}
                 onClick={() => setSubject(subject === s.key ? undefined : s.key)}
               >
                 {s.label}
@@ -108,18 +121,25 @@ export function PracticeSetup({ mode, questions, explanations, progress }: Props
           </div>
         </Field>
 
-        <div className="flex items-center justify-between border-t border-line pt-4 text-sm">
-          <span className="text-ink-faint">
-            符合條件 <span className="font-mono font-semibold text-ink">{available}</span> 題
-          </span>
-          <span className="text-ink-faint">
-            {mode === "year" ? "整份作答" : `本輪 ${progress.store.settings.perRoundCount} 題`}
-          </span>
+        <div className="grid grid-cols-2 border-[3px] border-charcoal text-sm">
+          <div className="border-r-[3px] border-charcoal bg-machine p-3">
+            <span className="system-label block">MATCHED RECORDS</span>
+            <strong className="mt-1 block font-mono text-xl" aria-label="符合條件題數">{available}</strong>
+            <small>符合條件題數</small>
+          </div>
+          <div className="bg-machine p-3">
+            <span className="system-label block">QUEUE SIZE</span>
+            <strong className="mt-1 block font-mono text-xl">
+              {mode === "year" ? available : Math.min(available, progress.store.settings.perRoundCount)}
+            </strong>
+            <small>{mode === "year" ? "整份作答" : `上限 ${progress.store.settings.perRoundCount} 題`}</small>
+          </div>
         </div>
-      </div>
+        </div>
+      </section>
 
-      <button className="btn-primary mt-6 w-full" onClick={start} disabled={available === 0}>
-        開始練習
+      <button type="button" aria-label="開始練習" className="system-button-primary mt-6 w-full" onClick={start} disabled={available === 0}>
+        <kbd className="font-mono text-[0.62rem]">START ↵</kbd> 開始練習
       </button>
     </div>
   );
@@ -127,9 +147,9 @@ export function PracticeSetup({ mode, questions, explanations, progress }: Props
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-2.5">
-      <div className="eyebrow">{label}</div>
+    <fieldset className="grid gap-2.5 border-0 p-0">
+      <legend className="system-label mb-1">{label}</legend>
       {children}
-    </div>
+    </fieldset>
   );
 }

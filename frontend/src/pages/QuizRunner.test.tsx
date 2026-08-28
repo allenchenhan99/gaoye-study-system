@@ -25,6 +25,7 @@ describe("QuizRunner", () => {
     const { result } = renderHook(() => useLocalProgress());
     render(<QuizRunner questions={qs} explanations={new Map()} progress={result.current} />);
 
+    expect(screen.getByRole("progressbar", { name: "作答進度 50%" })).toBeInTheDocument();
     fireEvent.click(screen.getByText("丙")); // 答對 a
     // 停在原題，顯示正解與詳解，不自動跳題
     expect(screen.getByText("題a")).toBeInTheDocument();
@@ -53,5 +54,15 @@ describe("QuizRunner", () => {
     expect(screen.getByText("題a")).toBeInTheDocument();
     expect(screen.getByText(/正確答案/)).toBeInTheDocument();
     expect(screen.queryByText("題b")).not.toBeInTheDocument();
+  });
+
+  it("presents a system result status after finishing a round", () => {
+    const { result } = renderHook(() => useLocalProgress());
+    render(<QuizRunner questions={[mk("a", "C")]} explanations={new Map()} progress={result.current} />);
+
+    fireEvent.click(screen.getByText("丙"));
+    fireEvent.click(screen.getByRole("button", { name: /完成/ }));
+
+    expect(screen.getByRole("status", { name: "本輪學習結果" })).toHaveTextContent("100%");
   });
 });
