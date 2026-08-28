@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#090d0c" />
+    <title>券商終端機｜高業考古題</title>
+    <link rel="stylesheet" href="../shared.css" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="terminal-shell">
+      <header class="terminal-topbar">
+        <a href="../index.html" class="terminal-brand">[ESC] VISUAL LAB</a>
+        <div class="session-title"><strong>券商終端機</strong><span>BROKER TERMINAL 88</span></div>
+        <div class="clock"><span>114/08/28</span><strong>22:08:16</strong></div>
+      </header>
+
+      <div class="quote-tape" aria-label="學習狀態跑馬資訊">
+        <span class="amber">GAOYE 題庫 5,400</span>
+        <span>LAW 法規 <b>81.4% ▲</b></span>
+        <span>INV 投資學 <b>76.2% ▲</b></span>
+        <span>FIN 財務分析 <i>69.8% ▼</i></span>
+        <span>SESSION 326Q</span>
+      </div>
+
+      <main class="terminal-grid">
+        <aside class="function-panel" aria-labelledby="terminal-title">
+          <p class="panel-code">SYS.GY-01</p>
+          <h1 id="terminal-title" aria-label="證券商高級業務員">證券商<br />高級業務員</h1>
+          <p class="status-line"><i></i> LOCAL DATA ONLINE</p>
+
+          <nav class="function-keys" aria-label="功能選單">
+            <a href="#"><kbd>F1</kbd><span>年份練習<small>YEAR ARCHIVE</small></span></a>
+            <a href="#"><kbd>F2</kbd><span>隨機練習<small>RANDOM DRAW</small></span></a>
+            <a href="#"><kbd>F3</kbd><span>科目練習<small>SECTOR FOCUS</small></span></a>
+            <a class="primary" href="#"><kbd>F4</kbd><span>模擬考<small>FULL SESSION</small></span></a>
+          </nav>
+        </aside>
+
+        <section class="work-panel">
+          <header class="panel-heading">
+            <div><span>WORK QUEUE</span><strong>今日應試佇列</strong></div>
+            <span class="live-tag">● LIVE</span>
+          </header>
+
+          <div class="market-summary">
+            <div><span>已作答</span><strong>0326</strong><small>QUESTIONS</small></div>
+            <div><span>正確率</span><strong class="green">78.0</strong><small>PERCENT</small></div>
+            <div><span>錯題本</span><strong class="red">0018</strong><small>OPEN ITEMS</small></div>
+            <div><span>連續日</span><strong class="amber">0007</strong><small>DAY STREAK</small></div>
+          </div>
+
+          <div class="orders">
+            <div class="orders-head"><span>功能</span><span>工作內容</span><span>數量</span><span>狀態</span></div>
+            <a href="#"><b>YEAR</b><span>114 年第 3 次｜完整試卷</span><em>50Q</em><i>READY</i></a>
+            <a href="#"><b>RAND</b><span>跨年度隨機｜全科</span><em>20Q</em><i>READY</i></a>
+            <a href="#"><b>WEAK</b><span>財務分析｜弱點加強</span><em>20Q</em><i class="warn">WATCH</i></a>
+            <a class="selected" href="#"><b>EXAM</b><span>正式模擬｜計時 60 分</span><em>50Q</em><i>ENTER</i></a>
+          </div>
+
+          <div class="command-hint"><span>COMMAND&gt;</span><strong>F4 EXAM --COUNT 50 --TIMER 60</strong><i>█</i></div>
+        </section>
+
+        <aside class="analytics-panel">
+          <section>
+            <header class="panel-heading small"><strong>績效監控</strong><span>PERFORMANCE</span></header>
+            <table>
+              <thead><tr><th>科目</th><th>對/答</th><th>率</th></tr></thead>
+              <tbody>
+                <tr><td>法規</td><td>127/156</td><td class="green">81%</td></tr>
+                <tr><td>投資學</td><td>093/122</td><td class="green">76%</td></tr>
+                <tr><td>財務分析</td><td>034/048</td><td class="amber">70%</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section class="mini-chart" aria-label="七日答題量圖表">
+            <header><strong>7D VOLUME</strong><span>+18.2%</span></header>
+            <div><i style="--h:32%"></i><i style="--h:58%"></i><i style="--h:45%"></i><i style="--h:76%"></i><i style="--h:54%"></i><i style="--h:88%"></i><i style="--h:72%"></i></div>
+            <footer><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></footer>
+          </section>
+
+          <nav class="utility-keys" aria-label="複習與追蹤">
+            <a href="#"><kbd>F7</kbd>錯題本 <b>18</b></a>
+            <a href="#"><kbd>F8</kbd>收藏 <b>24</b></a>
+            <a href="#"><kbd>F9</kbd>統計 <b>↗</b></a>
+          </nav>
+        </aside>
+      </main>
+
+      <footer class="terminal-footer">
+        <span>READY · 題庫同步完成 · 進度儲存於本機</span>
+        <span>ALT+H HELP　CTRL+R RESET　ESC EXIT</span>
+      </footer>
+    </div>
+  </body>
+</html>
