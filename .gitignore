@@ -3,6 +3,8 @@
 raw/
 # 管線產出資料（除人工辨識的答案外）
 data/*
+!data/questions.json
+!data/source-coverage.json
 !data/manual-answers.json
 !data/manual-questions.json
 !data/explanations.json

@@ -3,16 +3,20 @@ import re
 from collections import Counter
 from pathlib import Path
 
-_ID_RE = re.compile(r"^\d{3}-\d-(law|investment|finance)-\d{3}$")
+_ID_RE = re.compile(r"^(\d{3})-(\d+)-(law|investment|finance)-(\d{3})$")
 
 def validate_questions(questions):
     reviews = []
     for q in questions:
         reasons = []
-        if not q.get("stem"):
+        stem = q.get("stem")
+        if not isinstance(stem, str) or not stem.strip():
             reasons.append("empty_stem")
         opts = q.get("options", {})
-        if set(opts) != {"A", "B", "C", "D"} or any(not str(opts.get(k, "")).strip() for k in ("A", "B", "C", "D")):
+        if (not isinstance(opts, dict)
+                or set(opts) != {"A", "B", "C", "D"}
+                or any(not isinstance(opts.get(k), str) or not opts[k].strip()
+                       for k in ("A", "B", "C", "D"))):
             reasons.append("missing_option")
         ans = q.get("answer")
         if q.get("allCredit"):
@@ -21,8 +25,35 @@ def validate_questions(questions):
             reasons.append("missing_answer")
         elif ans not in ("A", "B", "C", "D"):
             reasons.append("bad_answer")
-        if q.get("year") is None or q.get("round") is None or not _ID_RE.match(q.get("id", "")):
+        question_id = q.get("id")
+        identity_match = (
+            _ID_RE.fullmatch(question_id)
+            if isinstance(question_id, str)
+            else None
+        )
+        if (type(q.get("year")) is not int
+                or type(q.get("round")) is not int
+                or type(q.get("number")) is not int
+                or not isinstance(question_id, str)
+                or identity_match is None):
             reasons.append("bad_id")
+        elif (
+            int(identity_match.group(1)) != q["year"]
+            or int(identity_match.group(2)) != q["round"]
+            or identity_match.group(3) != q.get("subject")
+            or int(identity_match.group(4)) != q["number"]
+        ):
+            reasons.append("inconsistent_id")
+        if q.get("subject") not in {"law", "investment", "finance"}:
+            reasons.append("bad_subject")
+        if any(
+            field in q
+            and (not isinstance(q[field], str) or not q[field].strip())
+            for field in ("roundLabel", "subjectLabel")
+        ):
+            reasons.append("bad_label")
+        if "allCredit" in q and not isinstance(q["allCredit"], bool):
+            reasons.append("bad_all_credit")
         if reasons:
             reviews.append({"id": q.get("id"), "reason": ",".join(reasons),
                             "source": q.get("source")})

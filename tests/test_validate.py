@@ -2,11 +2,11 @@ import json
 from scripts import validate
 
 QS = [
-    {"id": "114-1-law-001", "year": 114, "round": 1, "stem": "x",
+    {"id": "114-1-law-001", "year": 114, "round": 1, "number": 1, "stem": "x",
      "options": {"A": "1", "B": "2", "C": "3", "D": "4"}, "answer": "C", "subject": "law"},
-    {"id": "114-1-law-002", "year": 114, "round": 1, "stem": "x",
+    {"id": "114-1-law-002", "year": 114, "round": 1, "number": 2, "stem": "x",
      "options": {"A": "1", "B": "2", "C": "3"}, "answer": "A", "subject": "law"},
-    {"id": "114-1-investment-001", "year": 114, "round": 1, "stem": "",
+    {"id": "114-1-investment-001", "year": 114, "round": 1, "number": 1, "stem": "",
      "options": {"A": "1", "B": "2", "C": "3", "D": "4"}, "answer": None, "subject": "investment"},
 ]
 
@@ -22,7 +22,7 @@ def test_count_report():
     assert abs(rep["answer_rate"] - 2/3) < 1e-6
 
 def test_validate_flags_bad_answer():
-    qs = [{"id": "114-1-law-001", "year": 114, "round": 1, "stem": "x",
+    qs = [{"id": "114-1-law-001", "year": 114, "round": 1, "number": 1, "stem": "x",
            "options": {"A": "1", "B": "2", "C": "3", "D": "4"},
            "answer": "E", "subject": "law"}]
     reasons = {r["id"]: r["reason"] for r in validate.validate_questions(qs)}
@@ -39,30 +39,64 @@ def test_write_review_writes_valid_json(tmp_path):
     assert data[0]["id"] == "114-1-law-001" and data[0]["reason"] == "missing_answer"
 
 def test_validate_allcredit_not_flagged():
-    qs = [{"id": "114-1-law-001", "year": 114, "round": 1, "stem": "送分題",
+    qs = [{"id": "114-1-law-001", "year": 114, "round": 1, "number": 1, "stem": "送分題",
            "answer": None, "allCredit": True,
            "options": {"A": "1", "B": "2", "C": "3", "D": "4"}, "subject": "law"}]
     assert validate.validate_questions(qs) == []
 
 def test_count_report_counts_allcredit_as_resolved():
-    qs = [{"id": "114-1-law-001", "year": 114, "round": 1, "stem": "s",
+    qs = [{"id": "114-1-law-001", "year": 114, "round": 1, "number": 1, "stem": "s",
            "answer": None, "allCredit": True,
            "options": {"A": "1", "B": "2", "C": "3", "D": "4"}, "subject": "law"}]
     assert validate.count_report(qs)["with_answer"] == 1
 
 def test_validate_flags_malformed_id():
-    qs = [{"id": "None-None-law-001", "year": None, "round": None, "stem": "s",
+    qs = [{"id": "None-None-law-001", "year": None, "round": None, "number": 1, "stem": "s",
            "options": {"A": "1", "B": "2", "C": "3", "D": "4"}, "answer": "A", "subject": "law"}]
     reasons = {r["id"]: r["reason"] for r in validate.validate_questions(qs)}
     assert "bad_id" in reasons["None-None-law-001"]
 
 def test_validate_good_id_not_flagged_as_bad_id():
-    qs = [{"id": "114-1-law-001", "year": 114, "round": 1, "stem": "s",
+    qs = [{"id": "114-1-law-001", "year": 114, "round": 1, "number": 1, "stem": "s",
            "options": {"A": "1", "B": "2", "C": "3", "D": "4"}, "answer": "A", "subject": "law"}]
     assert validate.validate_questions(qs) == []
 
 def test_validate_flags_empty_option_value():
-    qs = [{"id": "114-1-law-001", "year": 114, "round": 1, "stem": "s",
+    qs = [{"id": "114-1-law-001", "year": 114, "round": 1, "number": 1, "stem": "s",
            "options": {"A": "", "B": "乙", "C": "丙", "D": "丁"}, "answer": "B", "subject": "law"}]
     reasons = {r["id"]: r["reason"] for r in validate.validate_questions(qs)}
     assert "missing_option" in reasons["114-1-law-001"]
+
+
+def test_validate_flags_invalid_subject_and_browser_labels():
+    qs = [{"id": "114-1-law-001", "year": 114, "round": 1, "number": 1,
+           "roundLabel": "", "subject": "other", "subjectLabel": None,
+           "stem": "s", "options": {"A": "1", "B": "2", "C": "3", "D": "4"},
+           "answer": "A"}]
+    reasons = validate.validate_questions(qs)[0]["reason"]
+    assert "bad_subject" in reasons
+    assert "bad_label" in reasons
+
+
+def test_validate_flags_non_boolean_allcredit():
+    qs = [{"id": "114-1-law-001", "year": 114, "round": 1, "number": 1,
+           "subject": "law", "stem": "s",
+           "options": {"A": "1", "B": "2", "C": "3", "D": "4"},
+           "answer": None, "allCredit": "yes"}]
+    assert "bad_all_credit" in validate.validate_questions(qs)[0]["reason"]
+
+
+def test_validate_flags_id_that_disagrees_with_question_fields():
+    qs = [{"id": "114-1-law-001", "year": 999, "round": 1, "number": 1,
+           "subject": "law", "stem": "s",
+           "options": {"A": "1", "B": "2", "C": "3", "D": "4"},
+           "answer": "A"}]
+    assert "inconsistent_id" in validate.validate_questions(qs)[0]["reason"]
+
+
+def test_validate_rejects_booleans_as_numeric_identity_fields():
+    qs = [{"id": "114-1-law-001", "year": 114, "round": True, "number": 1,
+           "subject": "law", "stem": "s",
+           "options": {"A": "1", "B": "2", "C": "3", "D": "4"},
+           "answer": "A"}]
+    assert "bad_id" in validate.validate_questions(qs)[0]["reason"]
