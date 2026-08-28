@@ -19,3 +19,7 @@ frontend/tsconfig.tsbuildinfo
 
 # Local feature worktrees
 .worktrees/
+
+# Internal planning artifacts
+docs/plans/
+docs/superpowers/
