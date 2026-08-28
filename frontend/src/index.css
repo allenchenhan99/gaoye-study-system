@@ -105,43 +105,33 @@
 
   .system-panel { @apply border-[3px] border-charcoal bg-machine; }
 
-  .system-button,
-  .btn-ghost {
+  .system-button {
     @apply inline-flex min-h-11 items-center justify-center gap-2 border-[3px] border-charcoal bg-machine px-4 py-2 text-sm font-black no-underline;
     box-shadow: 4px 4px 0 #8f908b;
     transition: transform 90ms steps(2,end), box-shadow 90ms steps(2,end);
   }
 
-  .system-button:hover,
-  .btn-ghost:hover { transform: translate(2px,2px); box-shadow: 2px 2px 0 #8f908b; }
+  .system-button:hover { transform: translate(2px,2px); box-shadow: 2px 2px 0 #8f908b; }
 
-  .system-button-primary,
-  .btn-primary {
+  .system-button-primary {
     @apply inline-flex min-h-11 items-center justify-center gap-2 border-[3px] border-charcoal bg-instruction px-5 py-2.5 text-sm font-black tracking-wide text-document;
     box-shadow: 4px 4px 0 #24262b;
     transition: transform 90ms steps(2,end), box-shadow 90ms steps(2,end);
   }
 
-  .system-button-primary:hover,
-  .btn-primary:hover { transform: translate(2px,2px); box-shadow: 2px 2px 0 #24262b; }
-  .system-button-primary:active,
-  .btn-primary:active { transform: translate(4px,4px); box-shadow: none; }
-  .system-button-primary:disabled,
-  .btn-primary:disabled { @apply cursor-not-allowed bg-ink-faint; box-shadow: none; transform: none; }
+  .system-button-primary:hover { transform: translate(2px,2px); box-shadow: 2px 2px 0 #24262b; }
+  .system-button-primary:active { transform: translate(4px,4px); box-shadow: none; }
+  .system-button-primary:disabled { @apply cursor-not-allowed bg-ink-faint; box-shadow: none; transform: none; }
 
-  .system-tab,
-  .pill {
+  .system-tab {
     @apply min-h-11 border-[3px] border-charcoal bg-machine px-3 py-2 text-sm font-bold;
     box-shadow: inset 3px 3px 0 #fff, inset -3px -3px 0 rgba(36,38,43,.22);
   }
 
-  .system-tab:hover,
-  .pill:hover { @apply bg-document; }
-  .system-tab-active,
-  .pill-on { @apply bg-crt text-document; box-shadow: inset 3px 3px 0 #1b354e; }
+  .system-tab:hover { @apply bg-document; }
+  .system-tab-active { @apply bg-crt text-document; box-shadow: inset 3px 3px 0 #1b354e; }
 
-  .system-label,
-  .eyebrow { @apply font-mono text-[0.66rem] font-black uppercase tracking-[0.08em] text-instruction; }
+  .system-label { @apply font-mono text-[0.66rem] font-black uppercase tracking-[0.08em] text-instruction; }
 
   .status-cell { @apply border-[3px] border-charcoal bg-document p-3; }
 
@@ -224,11 +214,6 @@
   .system-timer b { @apply min-w-[64px] px-2 text-center text-base; }
   .system-timer[data-state="warning"] { @apply border-wrong text-wrong; box-shadow: 3px 3px 0 #c93636; }
   .system-timer[data-state="warning"] .system-timer-label { @apply bg-wrong; }
-
-  .card {
-    @apply border-[3px] border-charcoal bg-document;
-    box-shadow: 5px 5px 0 #b5b4ae;
-  }
 
   .explanation { @apply text-[0.94rem] leading-7 text-ink-soft; }
   .explanation > :first-child { margin-top: 0; }
