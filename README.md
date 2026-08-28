@@ -1,6 +1,6 @@
 # 高業學習系統
 
-[![Deploy frontend to GitHub Pages](https://github.com/allenchenhan99/gaoye-study-system/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/allenchenhan99/gaoye-study-system/actions/workflows/deploy-pages.yml)
+[![Deploy frontend to GitHub Pages](https://github.com/allenchenhan99/gaoye-study-system/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/allenchenhan99/gaoye-study-system/actions/workflows/deploy-pages.yml) <a href="https://buymeacoffee.com/allenchenhan99"><img src="https://cdn.simpleicons.org/buymeacoffee/FFDD00" width="22" height="22" alt="Buy Me a Coffee"></a>
 
 為證券商高級業務員測驗打造的歷屆試題練習平台。介面取材自 1990 年代日系教學軟體，以清楚的題目文件、方形操作鍵與本機學習記錄，提供專注且快速的複習流程。
 
@@ -111,11 +111,5 @@ gaoye-study-system/
 ## 題庫與免責聲明
 
 本專案以考試複習與學習工具為目的。題目、答案與詳解可能因法規修訂、官方更正或資料整理而有所差異；應試時請以主管機關及正式考試公告為準。本網站並非主管機關或考試單位的官方服務。
-
-## 支持專案
-
-高業學習系統目前免費開放。你的支持會投入題庫整理、詳解補充、功能開發與長期維護。
-
-**[在 Buy Me a Coffee 支持網站維護](https://buymeacoffee.com/allenchenhan99)**
 
 若發現題目資料問題或有功能建議，歡迎透過 [GitHub Issues](https://github.com/allenchenhan99/gaoye-study-system/issues) 回報。
