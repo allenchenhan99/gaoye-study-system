@@ -16,3 +16,6 @@ __pycache__/
 # 詳解生成中繼工作檔
 data/_explain_work/
 frontend/tsconfig.tsbuildinfo
+
+# Local feature worktrees
+.worktrees/
