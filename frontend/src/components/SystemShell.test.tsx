@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { vi } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 import { SystemShell } from "./SystemShell";
 
@@ -6,7 +7,14 @@ describe("SystemShell", () => {
   it("provides the study-system application landmarks and live database status", () => {
     render(
       <MemoryRouter initialEntries={["/stats"]}>
-        <SystemShell bankSize={5400}>
+        <SystemShell
+          bankSize={5400}
+          syncStatus="synced"
+          user={{ id: "user-1", email: "learner@example.com", name: "學員", avatarUrl: null }}
+          onSignOut={vi.fn()}
+          accountBusy
+          accountError="登出失敗，請再試一次。"
+        >
           <p>統計內容</p>
         </SystemShell>
       </MemoryRouter>
@@ -15,8 +23,10 @@ describe("SystemShell", () => {
     expect(screen.getByRole("banner")).toHaveTextContent("高業學習系統");
     expect(screen.getByRole("navigation", { name: "系統選單" })).toBeInTheDocument();
     expect(screen.getByRole("main")).toHaveTextContent("統計內容");
-    expect(screen.getByRole("contentinfo")).toHaveTextContent("LOCAL DATA READY");
+    expect(screen.getByRole("contentinfo")).toHaveTextContent("CLOUD SYNC READY");
     expect(screen.getByText("5,400 records")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "learner@example.com，登出" })).toBeDisabled();
+    expect(screen.getByRole("alert")).toHaveTextContent("登出失敗");
 
     const supportLink = screen.getByRole("link", { name: "支持網站維護" });
     expect(supportLink).toHaveAttribute("href", "https://buymeacoffee.com/allenchenhan99");

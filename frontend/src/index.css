@@ -44,6 +44,46 @@
 }
 
 @layer components {
+  .public-desktop {
+    @apply mx-auto flex min-h-screen w-full max-w-[1280px] flex-col border-x-4 border-charcoal bg-machine;
+    box-shadow: 10px 0 0 rgba(36,38,43,.25), -10px 0 0 rgba(36,38,43,.25);
+  }
+
+  .public-manual {
+    @apply grid min-h-0 flex-1 grid-cols-[minmax(0,1.45fr)_minmax(320px,.75fr)] bg-document;
+  }
+
+  .public-intro { @apply border-r-4 border-charcoal p-8 lg:p-12; }
+  .public-login { @apply m-6 self-center border-4 border-charcoal bg-document lg:m-10; box-shadow: 7px 7px 0 #8f908b; }
+  .public-login-titlebar { @apply flex items-center justify-between border-b-4 border-charcoal bg-crt px-3 py-2 font-mono text-[0.62rem] font-black text-document; }
+
+  .public-feature-row {
+    @apply grid min-h-[66px] grid-cols-[48px_1fr_26px] items-stretch border-[3px] border-charcoal bg-document;
+    box-shadow: 3px 3px 0 #b5b4ae;
+  }
+  .public-feature-row > b { @apply grid place-items-center border-r-[3px] border-charcoal bg-machine font-mono text-sm; }
+  .public-feature-row > span { @apply self-center px-3 py-2; }
+  .public-feature-row strong { @apply block text-sm font-black; }
+  .public-feature-row small { @apply mt-1 block text-xs leading-5 text-ink-soft; }
+  .public-feature-row > em { @apply grid place-items-center bg-charcoal text-[0.55rem] not-italic text-crt; }
+
+  .google-login-button {
+    @apply inline-flex min-h-12 items-center justify-center gap-3 border-[3px] border-charcoal bg-document px-4 py-2 text-sm font-black;
+    box-shadow: 4px 4px 0 #24262b;
+    transition: transform 90ms steps(2,end), box-shadow 90ms steps(2,end);
+  }
+  .google-login-button:not(:disabled):hover { transform: translate(2px,2px); box-shadow: 2px 2px 0 #24262b; }
+  .google-login-button:not(:disabled):active { transform: translate(4px,4px); box-shadow: none; }
+  .google-login-button:disabled { @apply cursor-not-allowed bg-machine text-ink-faint; box-shadow: none; }
+  .login-status { @apply mt-4 border-2 border-warning bg-warning-bg p-3 text-center text-xs font-bold text-warning; }
+  .login-error { @apply mt-4 border-2 border-wrong bg-wrong-bg p-3 text-center text-xs font-bold text-wrong; }
+
+  .coffee-icon-link {
+    @apply grid h-11 w-11 shrink-0 place-items-center border-[3px] border-charcoal bg-[#FFDD00] text-charcoal no-underline;
+    box-shadow: 3px 3px 0 #8f908b;
+  }
+  .coffee-icon-link:hover { @apply bg-document; transform: translate(2px,2px); box-shadow: 1px 1px 0 #8f908b; }
+
   .system-desktop {
     @apply mx-auto flex min-h-screen w-full max-w-[1440px] flex-col border-x-4 border-charcoal bg-machine;
     box-shadow: 10px 0 0 rgba(36,38,43,.25), -10px 0 0 rgba(36,38,43,.25);
@@ -91,10 +131,17 @@
     box-shadow: inset 3px 3px 0 rgba(255,255,255,.24), inset -3px -3px 0 rgba(36,38,43,.25);
   }
   .system-menubar a.system-support-link:hover { @apply bg-warning text-document; }
+  .system-account-button { @apply inline-flex min-h-8 max-w-48 shrink-0 items-center gap-1.5 border-0 bg-charcoal px-2.5 text-xs font-bold text-document; }
+  .system-account-button:hover { @apply bg-crt; }
+  .system-account-button:disabled { @apply cursor-wait bg-ink-faint; }
+  .system-account-button > span { @apply text-correct; }
+  .system-account-button kbd { @apply ml-1 text-[0.5rem] text-[#d9e6f2]; }
   .system-menubar kbd { @apply font-mono text-[0.58rem] font-black; }
   .system-edition { @apply shrink-0 pr-2 font-mono text-[0.62rem] font-bold text-ink-faint; }
 
   .system-main { @apply min-h-0 flex-1 bg-document; }
+  .sync-warning { @apply border-b-[3px] border-warning bg-warning-bg px-4 py-2 text-center text-xs font-bold text-warning; }
+  .account-warning { @apply border-b-[3px] border-wrong bg-wrong-bg px-4 py-2 text-center text-xs font-bold text-wrong; }
 
   .system-statusbar {
     @apply grid min-h-9 grid-cols-[1fr_auto_auto] items-center gap-6 border-t-4 border-charcoal bg-machine px-3 py-1 font-mono text-[0.62rem] font-bold;
@@ -236,6 +283,7 @@
 }
 
 @media (max-width: 640px) {
+  .public-desktop { @apply border-x-0; box-shadow: none; }
   .system-desktop { @apply border-x-0; box-shadow: none; }
   .system-titlebar { @apply grid-cols-[auto_1fr] px-2; }
   .system-app-name { @apply justify-self-end text-right; }
@@ -247,6 +295,12 @@
   .system-edition { @apply hidden; }
   .system-statusbar { @apply grid-cols-[1fr_auto] gap-3 px-2; }
   .system-statusbar span:last-child { @apply hidden; }
+}
+
+@media (max-width: 900px) {
+  .public-manual { @apply grid-cols-1; }
+  .public-intro { @apply border-b-4 border-r-0 p-5 sm:p-8; }
+  .public-login { @apply my-7; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -65,7 +65,7 @@ export function Home({ progress, bankSize }: HomeProps) {
           <div>
             <span className="system-label">LESSON SELECT / PAGE 01</span>
             <h2 className="mt-2 text-2xl font-black sm:text-3xl">請選擇今天的學習方式</h2>
-            <p className="mt-1 text-sm text-ink-faint">進度會自動儲存在這台裝置。</p>
+            <p className="mt-1 text-sm text-ink-faint">進度會自動同步至你的 Google 帳號。</p>
           </div>
           <div className="font-mono text-5xl font-black text-crt max-sm:text-4xl">01<small className="text-xs text-ink-faint">/06</small></div>
         </header>

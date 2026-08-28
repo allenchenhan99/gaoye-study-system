@@ -66,16 +66,52 @@ export function removeWrong(store: Store, id: string): Store {
   return s;
 }
 
+export function recordExam(store: Store, attempt: Store["examHistory"][number]): Store {
+  const next: Store = structuredClone(store);
+  next.examHistory.push(attempt);
+  return next;
+}
+
 export function loadStore(): Store {
+  return loadStoreFromKey(KEY);
+}
+
+export function loadStoreFromKey(key: string): Store {
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = localStorage.getItem(key);
     if (!raw) return defaultStore();
-    return { ...defaultStore(), ...JSON.parse(raw) };
+    const parsed = JSON.parse(raw) as Partial<Store>;
+    const defaults = defaultStore();
+    return {
+      ...defaults,
+      ...parsed,
+      progress: parsed.progress ?? defaults.progress,
+      wrongBook: parsed.wrongBook ?? defaults.wrongBook,
+      favorites: parsed.favorites ?? defaults.favorites,
+      stats: {
+        ...defaults.stats,
+        ...parsed.stats,
+        perSubject: {
+          ...defaults.stats.perSubject,
+          ...parsed.stats?.perSubject,
+        },
+      },
+      examHistory: parsed.examHistory ?? defaults.examHistory,
+      settings: { ...defaults.settings, ...parsed.settings },
+    };
   } catch {
     return defaultStore();
   }
 }
 
 export function saveStore(store: Store): void {
-  localStorage.setItem(KEY, JSON.stringify(store));
+  saveStoreToKey(KEY, store);
+}
+
+export function saveStoreToKey(key: string, store: Store): void {
+  localStorage.setItem(key, JSON.stringify(store));
+}
+
+export function removeLegacyStore(): void {
+  localStorage.removeItem(KEY);
 }

@@ -22,6 +22,7 @@ export function ExamRunner({ questions, explanations, progress }: Props) {
       const c = answers[q.id];
       if (c) progress.answer(q, c);
     });
+    progress.recordExam(score, questions.length);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 

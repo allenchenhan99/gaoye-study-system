@@ -20,7 +20,7 @@ export function Stats({ progress }: { progress: ReturnType<typeof useLocalProgre
         <div>
           <span className="system-label">RECORDS / PAGE 06</span>
           <h2 className="mt-2 text-3xl font-black text-ink">學習統計</h2>
-          <p className="mt-1 text-sm text-ink-faint">所有數據均儲存於這台裝置。</p>
+          <p className="mt-1 text-sm text-ink-faint">所有數據會同步至你的個人學習空間。</p>
         </div>
         <a href="#/" className="system-button shrink-0">
           <kbd className="font-mono text-[0.58rem]">ESC</kbd> 首頁
@@ -30,7 +30,7 @@ export function Stats({ progress }: { progress: ReturnType<typeof useLocalProgre
       <section className="system-window mt-6 overflow-hidden" aria-label="整體學習記錄">
         <header className="flex items-center justify-between border-b-[3px] border-charcoal bg-crt px-4 py-2 text-document">
           <b className="font-mono text-xs">OVERALL PERFORMANCE</b>
-          <span className="font-mono text-[0.58rem] font-bold">LOCAL RECORD</span>
+          <span className="font-mono text-[0.58rem] font-bold">CLOUD RECORD</span>
         </header>
         <div className="grid items-stretch sm:grid-cols-[190px_1fr]">
           <div className="grid place-items-center border-b-[3px] border-charcoal bg-machine p-6 text-center sm:border-b-0 sm:border-r-[3px]">
